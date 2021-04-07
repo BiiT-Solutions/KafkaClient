@@ -1,0 +1,148 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.biit</groupId>
+	<artifactId>kafka-client</artifactId>
+	<packaging>jar</packaging>
+	<version>0.0.26</version>
+	<name>Kafka client</name>
+	<description>Client used to communicate with the Kafka server.</description>
+
+	<distributionManagement>
+		<repository>
+			<id>central</id>
+			<name>libs-releases</name>
+			<url>https://artifactory.biit-solutions.com/artifactory/libs-release</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>libs-snapshot</name>
+			<url>https://artifactory.biit-solutions.com/artifactory/libs-snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:git:git.biit-solutions.com:KafkaClient.git</connection>
+		<developerConnection>scm:git:git.biit-solutions.com:KafkaClient.git</developerConnection>
+		<tag>FactManager</tag>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.jdk.version>1.8</java.jdk.version>
+		<plugin.compiler.version>2.3.2</plugin.compiler.version>
+		<plugin.exec.version>1.2.1</plugin.exec.version>
+		<org.testng.version>6.8</org.testng.version>
+		<maven-surefire.version>2.17</maven-surefire.version>
+		<maven-resources-plugin.version>2.7</maven-resources-plugin.version>
+		<log4j.version>1.2.17</log4j.version>
+		<maven-release-plugin.version>2.5.1</maven-release-plugin.version>
+		<maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
+		<project.scm.id>git</project.scm.id>
+		<biit-common-utils.version>[1.0,1.1)</biit-common-utils.version>
+		<rest-generic-client.version>[0.0,0.1)</rest-generic-client.version>
+		<event-structure.version>[0.0,0.1)</event-structure.version>
+		<kafka-clients.version>2.0.0</kafka-clients.version>
+	</properties>
+
+	<dependencies>
+		<!-- File access and logger -->
+		<dependency>
+			<groupId>com.biit</groupId>
+			<artifactId>common-utils</artifactId>
+			<version>${biit-common-utils.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.biit</groupId>
+			<artifactId>rest-generic-client</artifactId>
+			<version>${rest-generic-client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.biit</groupId>
+			<artifactId>event-structure</artifactId>
+			<version>${event-structure.version}</version>
+		</dependency>
+		<!-- log4j -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${org.testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>${kafka-clients.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>kafka-client</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${plugin.compiler.version}</version>
+				<configuration>
+					<source>${java.jdk.version}</source>
+					<target>${java.jdk.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire.version}</version>
+				<configuration>
+					<!-- DUE TO BUG IN SUREFIRE
+					https://twitter.com/fheremans/status/1057214797417271296
+					https://github.com/GoogleCloudPlatform/cloud-opensource-java/pull/201
+					-->
+					<useSystemClassLoader>false</useSystemClassLoader>
+					<useFile>false</useFile>
+					<trimStackTrace>false</trimStackTrace>
+					<suiteXmlFiles>
+						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
+					<useSystemClassLoader>false</useSystemClassLoader>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven-release-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-provider-gitexe</artifactId>
+						<version>${maven-scm-provider-gitexe.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<checkModificationExcludes>
+						<checkModificationExclude>pom.xml</checkModificationExclude>
+					</checkModificationExcludes>
+					<!-- This action is used by release:perform -->
+					<!-- During release:perform, enable the "release" profile -->
+					<releaseProfiles>release</releaseProfiles>
+					<!-- This goal is used by release:perform -->
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
