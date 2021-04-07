@@ -4,7 +4,7 @@
 	<groupId>com.biit</groupId>
 	<artifactId>kafka-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.26-SNAPSHOT</version>
+	<version>0.0.26</version>
 	<name>Kafka client</name>
 	<description>Client used to communicate with the Kafka server.</description>
 
@@ -24,7 +24,7 @@
 	<scm>
 		<connection>scm:git:git.biit-solutions.com:KafkaClient.git</connection>
 		<developerConnection>scm:git:git.biit-solutions.com:KafkaClient.git</developerConnection>
-		<tag>FactManager</tag>
+		<tag>kafka-client-0.0.26</tag>
 	</scm>
 
 	<properties>
