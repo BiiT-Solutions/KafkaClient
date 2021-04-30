@@ -4,6 +4,7 @@ import com.biit.kafkaclient.logger.KafkaClientLogger;
 import com.biit.utils.configuration.ConfigurationReader;
 import com.biit.utils.configuration.PropertiesSourceFile;
 import com.biit.utils.configuration.SystemVariablePropertiesSourceFile;
+import com.biit.utils.configuration.exceptions.PropertyNotFoundException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
@@ -16,14 +17,32 @@ public class KafkaClientConfigurationReader extends ConfigurationReader {
 	private static final String SYSTEM_VARIABLE_CONFIG = "KAFKA_CONFIG";
 	private String configFile = "settings.conf";
 
-	private static final String KEY_DESERIALIZER = "key.deserializer";
+
+	private static final String KEY_DESERIALIZER_CLASS_CONFIG = "key.deserializer";
+	private static final String VALUE_DESERIALIZER_CLASS_CONFIG = "value.deserializer";
+	private static final String BOOTSTRAP_SERVERS_CONFIG = "bootstrap.servers";
+	private static final String KEY_SERIALIZER_CLASS_CONFIG = "key.serializer";
+	private static final String VALUE_SERIALIZER_CLASS_CONFIG = "value.serializer";
+
+	// Default
+	private static final String DEFAULT_KEY_DESERIALIZER_CLASS_CONFIG = "org.apache.kafka.common.serialization.StringDeserializer";
+	private static final String DEFAULT_VALUE_DESERIALIZER_CLASS_CONFIG = "org.apache.kafka.common.serialization.StringDeserializer";
+	private static final String DEFAULT_BOOTSTRAP_SERVERS_CONFIG = "kafka:9092";
+	private static final String DEFAULT_KEY_SERIALIZER_CLASS_CONFIG = "org.apache.kafka.common.serialization.StringSerializer";
+	private static final String DEFAULT_VALUE_SERIALIZER_CLASS_CONFIG = "org.apache.kafka.common.serialization.StringSerializer";
 
 	private static KafkaClientConfigurationReader instance;
 
 	private KafkaClientConfigurationReader() {
 		super();
 		//Config file can be modified using Environment variables.
-		addProperty(KEY_DESERIALIZER, "asd");
+
+		addProperty(KEY_DESERIALIZER_CLASS_CONFIG, DEFAULT_KEY_DESERIALIZER_CLASS_CONFIG);
+		addProperty(VALUE_DESERIALIZER_CLASS_CONFIG, DEFAULT_VALUE_DESERIALIZER_CLASS_CONFIG);
+		addProperty(BOOTSTRAP_SERVERS_CONFIG, DEFAULT_BOOTSTRAP_SERVERS_CONFIG);
+		addProperty(KEY_SERIALIZER_CLASS_CONFIG, DEFAULT_KEY_SERIALIZER_CLASS_CONFIG);
+		addProperty(VALUE_SERIALIZER_CLASS_CONFIG, DEFAULT_VALUE_SERIALIZER_CLASS_CONFIG);
+
 		String settingsFileName=null;
 		try{
 			if(SYSTEM_VARIABLE_SETTINGS_FILE != null){
@@ -68,15 +87,44 @@ public class KafkaClientConfigurationReader extends ConfigurationReader {
 
 	public Properties getAllPropertiesAsPropertiesClass() {
 		Properties result = new Properties();
-		//result.putAll(super.getAllProperties());
-		addProperty(KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer");
-		result.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, "ID" + Math.abs(new Random().nextLong()));
-		result.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-		result.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-		result.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
-		result.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-		result.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+		result.putAll(super.getAllProperties());
+
+		/*result.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, "ID" + Math.abs(new Random().nextLong()));
+		result.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializerClassConfig());
+		result.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializerClassConfig());
+		result.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServersConfig());
+		result.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getKeySerializerClassConfig());
+		result.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getValueSerializerClassConfig());*/
 		return result;
+	}
+
+	private String getPropertyLogException(String propertyId) {
+		try {
+			return getProperty(propertyId);
+		} catch (PropertyNotFoundException e) {
+			KafkaClientLogger.errorMessage(this.getClass().getName(), e);
+			return null;
+		}
+	}
+
+	public String getKeyDeserializerClassConfig() {
+		return getPropertyLogException(KEY_DESERIALIZER_CLASS_CONFIG);
+	}
+
+	public String getValueDeserializerClassConfig() {
+		return getPropertyLogException(VALUE_DESERIALIZER_CLASS_CONFIG);
+	}
+
+	public String getBootstrapServersConfig() {
+		return getPropertyLogException(BOOTSTRAP_SERVERS_CONFIG);
+	}
+
+	public String getKeySerializerClassConfig() {
+		return getPropertyLogException(KEY_SERIALIZER_CLASS_CONFIG);
+	}
+
+	public String getValueSerializerClassConfig() {
+		return getPropertyLogException(VALUE_SERIALIZER_CLASS_CONFIG);
 	}
 
 }
