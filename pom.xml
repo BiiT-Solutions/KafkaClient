@@ -22,8 +22,8 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git:git.biit-solutions.com:KafkaClient.git</connection>
-		<developerConnection>scm:git:git.biit-solutions.com:KafkaClient.git</developerConnection>
+		<connection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</connection>
+		<connection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</developerConnection>
 		<tag>FactManager</tag>
 	</scm>
 
