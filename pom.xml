@@ -23,7 +23,7 @@
 
 	<scm>
 		<connection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</connection>
-		<connection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</developerConnection>
+		<developerConnection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</developerConnection>
 		<tag>FactManager</tag>
 	</scm>
 
