@@ -1,10 +1,11 @@
 package com.biit.kafkaclient.logger;
 
 import com.biit.logger.BiitLogger;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KafkaClientLogger extends BiitLogger {
-	private static Logger logger = Logger.getLogger(KafkaClientLogger.class);
+	private static Logger logger = LoggerFactory.getLogger(KafkaClientLogger.class);
 
 	/**
 	 * Events that have business meaning (i.e. creating category, deleting form,

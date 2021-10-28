@@ -4,7 +4,7 @@
 	<groupId>com.biit</groupId>
 	<artifactId>kafka-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.30-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>Kafka client</name>
 	<description>Client used to communicate with the Kafka server.</description>
 
@@ -35,14 +35,14 @@
 		<org.testng.version>6.8</org.testng.version>
 		<maven-surefire.version>2.17</maven-surefire.version>
 		<maven-resources-plugin.version>2.7</maven-resources-plugin.version>
-		<log4j.version>1.2.17</log4j.version>
 		<maven-release-plugin.version>2.5.1</maven-release-plugin.version>
 		<maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
 		<project.scm.id>git</project.scm.id>
-		<biit-common-utils.version>[1.0,1.1)</biit-common-utils.version>
-		<rest-generic-client.version>[0.0,0.1)</rest-generic-client.version>
-		<event-structure.version>[0.0,0.1)</event-structure.version>
 		<kafka-clients.version>2.0.0</kafka-clients.version>
+		<!-- BiiT Dependencies -->
+		<biit-common-utils.version>[1.1,1.2)</biit-common-utils.version>
+		<rest-generic-client.version>[1.0,1.1)</rest-generic-client.version>
+		<event-structure.version>[1.0,1.1)</event-structure.version>
 	</properties>
 
 	<dependencies>
@@ -61,12 +61,6 @@
 			<groupId>com.biit</groupId>
 			<artifactId>event-structure</artifactId>
 			<version>${event-structure.version}</version>
-		</dependency>
-		<!-- log4j -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
 		</dependency>
 		<!-- Testing -->
 		<dependency>
