@@ -12,3 +12,4 @@ tmp
 /pom.xml.releaseBackup
 /release.properties
 *.iml
+Kafka.log
