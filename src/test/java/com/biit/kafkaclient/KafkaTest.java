@@ -20,7 +20,7 @@ public class KafkaTest {
 		IKafkaConsumerClient<BasicEvent> kafkaClient = new KafkaConsumerClient<>(BasicEvent.class);
 		Set<BasicEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
 		Set<BasicEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
-		kafkaClient.startConsumer(Collections.singleton(TOPIC_NAME), e -> consumerEvents.add(e));
+		kafkaClient.startConsumer(Collections.singleton(TOPIC_NAME), consumerEvents::add);
 		for (int i = 0; i < EVENTS_QUANTITY; i++) {
 			BasicEvent generatedEvent = EventGenerator.generateNewBasicEvent();
 			producerEvents.add(generatedEvent);

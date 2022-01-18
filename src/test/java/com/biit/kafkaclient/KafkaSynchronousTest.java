@@ -12,13 +12,12 @@ import static com.biit.kafkaclient.EventGenerator.generateNewBasicEvent;
 public class KafkaSynchronousTest {
 	public static final int PREVIOUS_MESSAGES_COUNT = 10;
 	public static final int IN_PERIOD_MESSAGES_COUNT = 10;
-	public static final int LATER_MESSAGES_COUNT = 10;
 	public static final String TEST_TOPIC = "keyEvents";
 
 
 	@Test
 	public void getMessagesBetweenDatesTest() {
-		IKafkaSynchronousConsumerClient client = new KafkaSynchronousConsumerClient(BasicEvent.class);
+		IKafkaSynchronousConsumerClient<BasicEvent> client = new KafkaSynchronousConsumerClient<>(BasicEvent.class);
 		Set<BasicEvent> expectedResult = new HashSet<>();
 		Calendar previousDate = Calendar.getInstance();
 		previousDate.set(2016, Calendar.FEBRUARY, 1);
@@ -56,7 +55,7 @@ public class KafkaSynchronousTest {
 	@Test
 	public void getTestMessagesTest() {
 		IKafkaSynchronousConsumerClient<Object> client = new KafkaSynchronousConsumerClient<>(Object.class);
-		Collection messages = client.getMessages(1543750179000L, 12881173929760L, Collections.singleton(TEST_TOPIC));
+		Collection<?> messages = client.getMessages(1543750179000L, 12881173929760L, Collections.singleton(TEST_TOPIC));
 		for (Object message : messages) {
 			System.out.println(message);
 		}
