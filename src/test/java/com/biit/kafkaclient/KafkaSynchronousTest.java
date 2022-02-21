@@ -4,6 +4,7 @@ import com.biit.kafkaclient.valuesofinterest.BasicEvent;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.biit.kafkaclient.EventGenerator.generateNewBasicEvent;
@@ -36,18 +37,18 @@ public class KafkaSynchronousTest {
 		for (int i = 0; i < PREVIOUS_MESSAGES_COUNT; i++) {
 			BasicEvent event = generateNewBasicEvent(0, previousTimestamp);
 			KafkaProducerClient.send(TEST_TOPIC, event);
-			System.out.println("Generated timestamp: " + event.getCreationTime().getTime());
+			System.out.println("Generated timestamp: " + event.getCreationTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 		}
 		for (int i = 0; i < IN_PERIOD_MESSAGES_COUNT; i++) {
 			BasicEvent event = generateNewBasicEvent(periodStartTimestamp, periodEndTimestamp);
 			expectedResult.add(event);
 			KafkaProducerClient.send(TEST_TOPIC, event);
-			System.out.println("Generated timestamp: " + event.getCreationTime().getTime());
+			System.out.println("Generated timestamp: " + event.getCreationTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 		}
 		for (int i = 0; i < PREVIOUS_MESSAGES_COUNT; i++) {
 			BasicEvent event = generateNewBasicEvent(laterTimestamp, laterTimestamp + 1000);
 			KafkaProducerClient.send(TEST_TOPIC, event);
-			System.out.println("Generated timestamp: " + event.getCreationTime().getTime());
+			System.out.println("Generated timestamp: " + event.getCreationTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 		}
 		Assert.assertEquals(new HashSet<>(client.getMessages(periodStartTimestamp, periodEndTimestamp, Collections.singleton(TEST_TOPIC))), expectedResult);
 	}

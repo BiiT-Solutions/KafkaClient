@@ -1,5 +1,6 @@
 package com.biit.kafkaclient.valuesofinterest;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ public class Negotiation extends Opportunity {
 	private int customerId;
 	private String customerName;
 
-	public Negotiation(String id, Date creationTime) {
+	public Negotiation(String id, LocalDateTime creationTime) {
 		super(id, creationTime);
 	}
 
@@ -46,13 +47,13 @@ public class Negotiation extends Opportunity {
 		return customerName;
 	}
 
-	public void setCustumerName(String custumerName) {
-		this.customerName = custumerName;
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
 	@Override
 	public String toString() {
-		return getId() + " (" + getCreationTime() + ") : country='" + getCountry() + "', productId='" + getProductId() +
+		return getEventId() + " (" + getCreationTime() + ") : country='" + getCountry() + "', productId='" + getProductId() +
 				"', salesmanId='" + getSalesmanId() + "', salesmanName='" + getSalesmanName() +
 				"', customerId='" + getSalesmanId() + "', customerName='" + getCustomerName() + "'";
 	}

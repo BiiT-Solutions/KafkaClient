@@ -9,28 +9,31 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import java.time.ZoneId;
+
 public class KafkaProducerClient {
-	private static Producer<String, String> producer;
+    private static Producer<String, String> producer;
 
-	public static void send(String topic, IKafkaStorable value) {
-		if (value == null) {
-			throw new IllegalArgumentException("value must be not null.");
-		} else {
-			try {
-				getProducer().send(new ProducerRecord<>(topic, null, value.getCreationTime().getTime(), value.getId(),
-						JacksonSerializer.getDefaultSerializer().writeValueAsString(value)));
-			} catch (JsonProcessingException e) {
-				KafkaClientLogger.errorMessage(KafkaProducerClient.class, e);
-			}
-		}
-	}
+    public static void send(String topic, IKafkaStorable value) {
+        if (value == null) {
+            throw new IllegalArgumentException("value must be not null.");
+        } else {
+            try {
+                getProducer().send(new ProducerRecord<>(topic, null, value.getCreationTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                        value.getEventId(),
+                        JacksonSerializer.getDefaultSerializer().writeValueAsString(value)));
+            } catch (JsonProcessingException e) {
+                KafkaClientLogger.errorMessage(KafkaProducerClient.class, e);
+            }
+        }
+    }
 
-	private static Producer<String, String> getProducer() {
-		if (producer == null) {
-			Thread.currentThread().setContextClassLoader(null);
-			producer = new KafkaProducer<>(
-					KafkaClientConfigurationReader.getInstance().getAllPropertiesAsPropertiesClass());
-		}
-		return producer;
-	}
+    private static Producer<String, String> getProducer() {
+        if (producer == null) {
+            Thread.currentThread().setContextClassLoader(null);
+            producer = new KafkaProducer<>(
+                    KafkaClientConfigurationReader.getInstance().getAllPropertiesAsPropertiesClass());
+        }
+        return producer;
+    }
 }

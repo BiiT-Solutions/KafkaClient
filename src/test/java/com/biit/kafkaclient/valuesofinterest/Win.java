@@ -1,11 +1,11 @@
 package com.biit.kafkaclient.valuesofinterest;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 
 public class Win extends Proposal {
 
-	public Win(String id, Date creationTime) {
+	public Win(String id, LocalDateTime creationTime) {
 		super(id, creationTime);
 	}
 

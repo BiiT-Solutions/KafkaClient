@@ -3,39 +3,40 @@ package com.biit.kafkaclient.valuesofinterest;
 import com.biit.eventstructure.event.IKafkaStorable;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "class")
 public abstract class BasicEvent implements IKafkaStorable {
 	private String id;
-	private Date creationTime;
+	private LocalDateTime creationTime;
 
-	public BasicEvent(String id, Date creationTime) {
+	public BasicEvent(String id, LocalDateTime creationTime) {
 		this.id = id;
 		this.creationTime = creationTime;
 	}
 
 	public BasicEvent() {
 		this.id = UUID.randomUUID().toString();
-		this.creationTime = new Date();
+		this.creationTime = LocalDateTime.now();
 	}
 
-	public Date getCreationTime() {
+	public LocalDateTime getCreationTime() {
 		return creationTime;
 	}
 
-	public void setCreationTime(Date creationTime) {
+	public void setCreationTime(LocalDateTime creationTime) {
 		this.creationTime = creationTime;
 	}
 
 	@Override
 	public String toString() {
-		return getId() + " (" + getCreationTime() + ")";
+		return getEventId() + " (" + getCreationTime() + ")";
 	}
 
-	public String getId() {
+	@Override
+	public String getEventId() {
 		return id;
 	}
 
@@ -48,12 +49,12 @@ public abstract class BasicEvent implements IKafkaStorable {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		BasicEvent event = (BasicEvent) o;
-		return Objects.equals(getId(), event.getId()) &&
+		return Objects.equals(getEventId(), event.getEventId()) &&
 				Objects.equals(getCreationTime(), event.getCreationTime());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getCreationTime());
+		return Objects.hash(getEventId(), getCreationTime());
 	}
 }
