@@ -30,7 +30,7 @@ public class EventDeserializer<T> implements Deserializer<T> {
     private ObjectMapper objectMapper;
     private Class<T> clazz;
 
-    private final CipherInitializer cipherInitializer = new CipherInitializer();
+    private static Cipher cipher;
 
     protected EventDeserializer(Class<T> clazz) {
         this.clazz = clazz;
@@ -58,12 +58,19 @@ public class EventDeserializer<T> implements Deserializer<T> {
         return null;
     }
 
+    private static Cipher getCipher() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException {
+        if (cipher == null) {
+            final CipherInitializer cipherInitializer = new CipherInitializer();
+            cipher = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, eventEncryptionKey);
+        }
+        return cipher;
+    }
+
     public byte[] decrypt(byte[] data) {
         if (eventEncryptionKey != null && !eventEncryptionKey.isEmpty() && data != null && data.length > 0) {
             try {
                 KafkaLogger.debug(this.getClass(), "Event decrypted!");
-                final Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, eventEncryptionKey);
-                return cipher.doFinal(data);
+                return getCipher().doFinal(data);
             } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
                     | IllegalBlockSizeException e) {
                 throw new RuntimeException(e);

@@ -29,8 +29,7 @@ public class EventSerializer<T> implements Serializer<T> {
             new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATETIME_FORMAT));
 
     private ObjectMapper objectMapper;
-
-    private final CipherInitializer cipherInitializer = new CipherInitializer();
+    private static Cipher cipher;
 
     private ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
@@ -51,12 +50,19 @@ public class EventSerializer<T> implements Serializer<T> {
         return new byte[0];
     }
 
+    private static Cipher getCipher() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException {
+        if (cipher == null) {
+            final CipherInitializer cipherInitializer = new CipherInitializer();
+            cipher = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, eventEncryptionKey);
+        }
+        return cipher;
+    }
+
     public byte[] encrypt(byte[] data) {
         if (eventEncryptionKey != null && !eventEncryptionKey.isEmpty() && data != null) {
             try {
                 KafkaLogger.debug(this.getClass(), "Event encrypted!");
-                final Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, eventEncryptionKey);
-                return cipher.doFinal(data);
+                return getCipher().doFinal(data);
             } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
                     | IllegalBlockSizeException e) {
                 throw new RuntimeException(e);
