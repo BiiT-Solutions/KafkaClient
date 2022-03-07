@@ -25,6 +25,7 @@ public class EventListener<T> {
         return listeners;
     }
 
+    //These annotations are ignored. Here as future reference only. Use them on the child class.
     @KafkaListener(topics = "${kafka.topic}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}", containerFactory = "eventListenerContainerFactory")
     public void eventsListener(T event) {
         KafkaLogger.debug(this.getClass().getName(), "Event received '{}'.", event.toString());

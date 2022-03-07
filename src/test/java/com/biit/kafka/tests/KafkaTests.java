@@ -1,12 +1,12 @@
 package com.biit.kafka.tests;
 
-import com.biit.kafka.testevents.TestEvent;
-import com.biit.kafka.testevents.consumers.TestEventConsumer;
-import com.biit.kafka.testevents.consumers.TestEventConsumer2;
-import com.biit.kafka.testevents.consumers.TestEventConsumerListeners;
-import com.biit.kafka.testevents.consumers.TestEventConsumerListeners2;
-import com.biit.kafka.testevents.producers.TestEventProducer;
-import com.biit.kafka.testevents.producers.TestEventProducer2;
+import com.biit.kafka.TestEvent;
+import com.biit.kafka.consumers.TestEventConsumer;
+import com.biit.kafka.consumers.TestEventConsumer2;
+import com.biit.kafka.consumers.TestEventConsumerListeners;
+import com.biit.kafka.consumers.TestEventConsumerListeners2;
+import com.biit.kafka.producers.TestEventProducer;
+import com.biit.kafka.producers.TestEventProducer2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -92,7 +92,7 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         Set<TestEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
         Set<TestEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
         //Store received events into set.
-        testEventConsumerListeners.addListener(fact -> consumerEvents.add((TestEvent) fact));
+        testEventConsumerListeners.addListener(consumerEvents::add);
 
         for (int i = 0; i < EVENTS_QUANTITY; i++) {
             TestEvent generatedEvent = generateEvent(i);
@@ -108,7 +108,7 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         Set<TestEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY * 2));
         Set<TestEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
         Set<TestEvent> producerEvents2 = new HashSet<>(EVENTS_QUANTITY);
-        testEventConsumerListeners.addListener(fact -> consumerEvents.add((TestEvent) fact));
+        testEventConsumerListeners.addListener(consumerEvents::add);
         for (int i = 0; i < EVENTS_QUANTITY; i++) {
             TestEvent generatedEvent = generateEvent(i);
             producerEvents.add(generatedEvent);
@@ -126,8 +126,8 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         Set<TestEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
         Set<TestEvent> consumerEvents2 = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
         Set<TestEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
-        testEventConsumerListeners.addListener(fact -> consumerEvents.add((TestEvent) fact));
-        testEventConsumerListeners2.addListener(fact -> consumerEvents2.add((TestEvent) fact));
+        testEventConsumerListeners.addListener(consumerEvents::add);
+        testEventConsumerListeners2.addListener(consumerEvents2::add);
 
         for (int i = 0; i < EVENTS_QUANTITY; i++) {
             TestEvent generatedEvent = generateEvent(i);

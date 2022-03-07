@@ -1,4 +1,4 @@
-package com.biit.kafka.testevents;
+package com.biit.kafka;
 
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.stereotype.Service;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class KafkaConfig extends com.biit.kafka.KafkaConfig {
+public class KafkaTestConfig extends com.biit.kafka.KafkaConfig {
 
     @Override
     public Map<String, Object> getProperties() {

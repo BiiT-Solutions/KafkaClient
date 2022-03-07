@@ -1,4 +1,4 @@
-package com.biit.kafka.testevents;
+package com.biit.kafka;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
