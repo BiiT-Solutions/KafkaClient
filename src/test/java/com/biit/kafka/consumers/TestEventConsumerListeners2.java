@@ -9,7 +9,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 @Configuration
 public class TestEventConsumerListeners2 extends EventListener<TestEvent> {
 
-    @KafkaListener(topics = "${kafka.topic}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}", containerFactory = "eventListenerContainerFactory")
+    @KafkaListener(topics = "${kafka.topic}", groupId = "2", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}", containerFactory = "eventListenerContainerFactory")
     public void eventsListener(TestEvent event) {
         super.eventsListener(event);
     }

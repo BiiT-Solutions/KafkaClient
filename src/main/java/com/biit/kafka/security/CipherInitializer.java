@@ -4,7 +4,7 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -19,7 +19,7 @@ public class CipherInitializer {
 	public Cipher prepareAndInitCipher(int encryptionMode, String key) throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException,
 			InvalidAlgorithmParameterException {
 		final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
-		final Key secretKey = new SecretKeySpec(key.getBytes(Charset.defaultCharset()), SECRET_KEY_ALGORITHM);
+		final Key secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), SECRET_KEY_ALGORITHM);
 		final AlgorithmParameterSpec algorithmParameters = getAlgorithmParameterSpec(cipher);
 
 		callCipherInit(cipher, encryptionMode, secretKey, algorithmParameters);

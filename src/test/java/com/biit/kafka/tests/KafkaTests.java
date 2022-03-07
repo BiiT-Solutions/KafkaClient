@@ -101,6 +101,7 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         }
 
         wait(consumerEvents);
+        Assert.assertEquals(consumerEvents.size(), producerEvents.size());
         Assert.assertEquals(consumerEvents, producerEvents);
     }
 
@@ -170,6 +171,6 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         do {
             wait(1000);
             i++;
-        } while (consumerEvents.isEmpty() && i < 5);
+        } while (consumerEvents.size() < EVENTS_QUANTITY && i < 10);
     }
 }
