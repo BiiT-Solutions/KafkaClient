@@ -3,11 +3,11 @@
 	<test name="D3-clientTests" enabled="true" preserve-order="true">
 		<groups>
 			<run>
-				<exclude name="clientLocal"/>
+				<include name="kafkaEvents"/>
 			</run>
 		</groups>
 		<classes>
-			<class name="com.biit.kafkaclient.KafkaTest"/>
+			<class name="com.biit.kafka.tests.KafkaTests"/>
 		</classes>
 	</test>
 </suite>
