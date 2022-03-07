@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.biit</groupId>
     <artifactId>kafka-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
     <name>Kafka client</name>
     <description>Client used to communicate with the Kafka server.</description>
 
@@ -25,14 +24,14 @@
     <scm>
         <connection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</connection>
         <developerConnection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</developerConnection>
-        <tag>FactManager</tag>
+        <tag>kafka-client-1.1.1</tag>
     </scm>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.6.4</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <properties>
