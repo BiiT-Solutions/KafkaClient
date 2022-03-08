@@ -171,8 +171,8 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
     private void wait(Set<TestEvent> consumerEvents) throws InterruptedException {
         int i = 0;
         do {
-            wait(2000);
+            wait(1000);
             i++;
-        } while (consumerEvents.size() < EVENTS_QUANTITY && i < 30);
+        } while (consumerEvents.size() < EVENTS_QUANTITY && i < 20);
     }
 }
