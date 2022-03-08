@@ -1,7 +1,7 @@
 package com.biit.kafka;
 
+import com.biit.cipher.CipherInitializer;
 import com.biit.kafka.logger.KafkaLogger;
-import com.biit.kafka.security.CipherInitializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,17 +11,18 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.biit.kafka.security.EncryptionConfiguration.eventEncryptionKey;
+import static com.biit.cipher.EncryptionConfiguration.encryptionKey;
+
 
 public class EventDeserializer<T> implements Deserializer<T> {
     public static final LocalDateTimeDeserializer LOCAL_DATETIME_SERIALIZER =
@@ -29,8 +30,6 @@ public class EventDeserializer<T> implements Deserializer<T> {
 
     private ObjectMapper objectMapper;
     private Class<T> clazz;
-
-    private static Cipher cipher;
 
     protected EventDeserializer(Class<T> clazz) {
         this.clazz = clazz;
@@ -58,21 +57,13 @@ public class EventDeserializer<T> implements Deserializer<T> {
         return null;
     }
 
-    private static Cipher getCipher() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException {
-        if (cipher == null) {
-            final CipherInitializer cipherInitializer = new CipherInitializer();
-            cipher = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, eventEncryptionKey);
-        }
-        return cipher;
-    }
-
     public byte[] decrypt(byte[] data) {
-        if (eventEncryptionKey != null && !eventEncryptionKey.isEmpty() && data != null && data.length > 0) {
+        if (encryptionKey != null && !encryptionKey.isEmpty() && data != null && data.length > 0) {
             try {
                 KafkaLogger.debug(this.getClass(), "Event decrypted!");
-                return getCipher().doFinal(data);
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
-                    | IllegalBlockSizeException e) {
+                return CipherInitializer.getCipherForDecrypt().doFinal(data);
+            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
+                    NoSuchPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
                 throw new RuntimeException(e);
             }
         }

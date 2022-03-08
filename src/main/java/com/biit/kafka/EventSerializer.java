@@ -1,7 +1,7 @@
 package com.biit.kafka;
 
+import com.biit.cipher.CipherInitializer;
 import com.biit.kafka.logger.KafkaLogger;
-import com.biit.kafka.security.CipherInitializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,9 +17,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.time.format.DateTimeFormatter;
 
-import static com.biit.kafka.security.EncryptionConfiguration.eventEncryptionKey;
+import static com.biit.cipher.EncryptionConfiguration.encryptionKey;
 
 public class EventSerializer<T> implements Serializer<T> {
     public static final String DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss.SSS";
@@ -39,7 +40,7 @@ public class EventSerializer<T> implements Serializer<T> {
     }
 
     @Override
-    public byte[] serialize(String s, T event) {
+    public byte[] serialize(String topic, T event) {
         try {
             return encrypt(getObjectMapper().writeValueAsString(event).getBytes(StandardCharsets.UTF_8));
         } catch (JsonProcessingException e) {
@@ -48,21 +49,13 @@ public class EventSerializer<T> implements Serializer<T> {
         return new byte[0];
     }
 
-    private static Cipher getCipher() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException {
-        if (cipher == null) {
-            final CipherInitializer cipherInitializer = new CipherInitializer();
-            cipher = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, eventEncryptionKey);
-        }
-        return cipher;
-    }
-
     public byte[] encrypt(byte[] data) {
-        if (eventEncryptionKey != null && !eventEncryptionKey.isEmpty() && data != null) {
+        if (encryptionKey != null && !encryptionKey.isEmpty() && data != null) {
             try {
                 KafkaLogger.debug(this.getClass(), "Event encrypted!");
-                return getCipher().doFinal(data);
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
-                    | IllegalBlockSizeException e) {
+                return CipherInitializer.getCipherForEncrypt().doFinal(data);
+            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
+                    NoSuchPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
                 throw new RuntimeException(e);
             }
         }

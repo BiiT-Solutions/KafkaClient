@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @SpringBootApplication
-@ComponentScan({"com.biit.kafka"})
+@ComponentScan({"com.biit.kafka", "com.biit.cipher"})
 @PropertySource("classpath:application.properties")
 @Service
 public class TestEventManagerServer {
