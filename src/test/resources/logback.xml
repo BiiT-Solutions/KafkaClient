@@ -36,6 +36,10 @@
         <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <logger name="com.biit.cipher.logger.CipherLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="DAILY"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
     <root level="ERROR">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>

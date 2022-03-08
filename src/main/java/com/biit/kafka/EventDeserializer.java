@@ -50,7 +50,9 @@ public class EventDeserializer<T> implements Deserializer<T> {
     @Override
     public T deserialize(String topic, byte[] bytes) {
         try {
-            return getObjectMapper().readValue(new String(decrypt(bytes), StandardCharsets.UTF_8), clazz);
+            String data = new String(decrypt(bytes), StandardCharsets.UTF_8);
+            KafkaLogger.debug(this.getClass(), "Received event '{}'", data);
+            return getObjectMapper().readValue(data, clazz);
         } catch (IllegalArgumentException | JsonProcessingException e) {
             KafkaLogger.debug(this.getClass(), "Not a valid event.");
         }
@@ -60,13 +62,28 @@ public class EventDeserializer<T> implements Deserializer<T> {
     public byte[] decrypt(byte[] data) {
         if (encryptionKey != null && !encryptionKey.isEmpty() && data != null && data.length > 0) {
             try {
-                KafkaLogger.debug(this.getClass(), "Event decrypted!");
-                return CipherInitializer.getCipherForDecrypt().doFinal(data);
+                if (KafkaLogger.isDebugEnabled()) {
+                    KafkaLogger.debug(this.getClass(), "For decrypt '{}'.", byteArrayToHex(data));
+                }
+                byte[] decryptedData = CipherInitializer.getNewCipherForDecrypt().doFinal(data);
+                if (KafkaLogger.isDebugEnabled()) {
+                    KafkaLogger.debug(this.getClass(), "Decrypted '{}'.", byteArrayToHex(decryptedData));
+                }
+                return decryptedData;
             } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
                     NoSuchPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+                CipherInitializer.resetCipherForEncrypt();
+                KafkaLogger.severe(this.getClass(), "Decrypt failed from source '{}'.", byteArrayToHex(data));
                 throw new RuntimeException(e);
             }
         }
         return data;
+    }
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for (byte b : a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
     }
 }

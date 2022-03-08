@@ -42,7 +42,9 @@ public class EventSerializer<T> implements Serializer<T> {
     @Override
     public byte[] serialize(String topic, T event) {
         try {
-            return encrypt(getObjectMapper().writeValueAsString(event).getBytes(StandardCharsets.UTF_8));
+            String data = getObjectMapper().writeValueAsString(event);
+            KafkaLogger.debug(this.getClass(), "For encrypt '{}'.", data);
+            return encrypt(data.getBytes(StandardCharsets.UTF_8));
         } catch (JsonProcessingException e) {
             KafkaLogger.errorMessage(this.getClass(), e);
         }
@@ -52,13 +54,24 @@ public class EventSerializer<T> implements Serializer<T> {
     public byte[] encrypt(byte[] data) {
         if (encryptionKey != null && !encryptionKey.isEmpty() && data != null) {
             try {
-                KafkaLogger.debug(this.getClass(), "Event encrypted!");
-                return CipherInitializer.getCipherForEncrypt().doFinal(data);
+                byte[] encryptedData = CipherInitializer.getCipherForEncrypt().doFinal(data);
+                if (KafkaLogger.isDebugEnabled()) {
+                    KafkaLogger.debug(this.getClass(), "Encrypted as '{}'.", byteArrayToHex(encryptedData));
+                }
+                return encryptedData;
             } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
                     NoSuchPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+                CipherInitializer.resetCipherForEncrypt();
                 throw new RuntimeException(e);
             }
         }
         return data;
+    }
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for (byte b : a)
+            sb.append(String.format("%02x", b));
+        return sb.toString();
     }
 }

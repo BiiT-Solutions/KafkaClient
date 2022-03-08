@@ -1,5 +1,6 @@
 package com.biit.kafka.tests;
 
+import com.biit.cipher.CipherInitializer;
 import com.biit.kafka.TestEvent;
 import com.biit.kafka.consumers.TestEventConsumer;
 import com.biit.kafka.consumers.TestEventConsumer2;
@@ -8,19 +9,21 @@ import com.biit.kafka.consumers.TestEventConsumerListeners2;
 import com.biit.kafka.producers.TestEventProducer;
 import com.biit.kafka.producers.TestEventProducer2;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
@@ -75,17 +78,20 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         return TestEvent;
     }
 
-    private ObjectMapper getObjectMapper() {
-        if (objectMapper == null) {
-            final JavaTimeModule module = new JavaTimeModule();
-            LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
-            module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
-            objectMapper = Jackson2ObjectMapperBuilder.json()
-                    .modules(module)
-                    .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    .build();
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i + 1), 16));
         }
-        return objectMapper;
+        return data;
+    }
+
+    public void checkDecrypt() throws InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+            InvalidKeyException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException {
+        String data = "45c616cae84c09ea460788f6becf12e00464658c5a0701f2de51f5b89f1226e1";
+        CipherInitializer.getCipherForDecrypt().doFinal(hexStringToByteArray(data));
     }
 
     public synchronized void factTest() throws InterruptedException {
@@ -162,15 +168,11 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(consumerEvents, producerEvents);
     }
 
-    private int getWaitingTime() {
-        return EVENTS_QUANTITY * 40;
-    }
-
     private void wait(Set<TestEvent> consumerEvents) throws InterruptedException {
         int i = 0;
         do {
-            wait(1000);
+            wait(2000);
             i++;
-        } while (consumerEvents.size() < EVENTS_QUANTITY && i < 10);
+        } while (consumerEvents.size() < EVENTS_QUANTITY && i < 30);
     }
 }
