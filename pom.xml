@@ -51,6 +51,7 @@
         <biit-common-utils.version>[1.1,1.2)</biit-common-utils.version>
         <rest-generic-client.version>[1.0,1.1)</rest-generic-client.version>
         <event-structure.version>[1.0,1.1)</event-structure.version>
+        <cipher.version>[0, 1)</cipher.version>
     </properties>
 
     <dependencies>
@@ -59,6 +60,11 @@
             <groupId>com.biit</groupId>
             <artifactId>common-utils</artifactId>
             <version>${biit-common-utils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.biit</groupId>
+            <artifactId>cipher</artifactId>
+            <version>${cipher.version}</version>
         </dependency>
         <!-- Testing -->
         <dependency>
