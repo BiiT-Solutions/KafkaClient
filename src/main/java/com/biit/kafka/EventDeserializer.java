@@ -12,12 +12,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -68,13 +63,12 @@ public class EventDeserializer<T> implements Deserializer<T> {
                 if (KafkaLogger.isDebugEnabled()) {
                     KafkaLogger.debug(this.getClass(), "For decrypt '{}'.", byteArrayToHex(data));
                 }
-                byte[] decryptedData = CipherInitializer.getNewCipherForDecrypt().doFinal(data);
+                byte[] decryptedData = CipherInitializer.getCipherForDecrypt().doFinal(data);
                 if (KafkaLogger.isDebugEnabled()) {
                     KafkaLogger.debug(this.getClass(), "Decrypted '{}'.", byteArrayToHex(decryptedData));
                 }
                 return decryptedData;
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
-                    NoSuchPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+            } catch (BadPaddingException | IllegalBlockSizeException e) {
                 CipherInitializer.resetCipherForEncrypt();
                 KafkaLogger.severe(this.getClass(), "Decrypt failed from source '{}'.", byteArrayToHex(data));
                 throw new RuntimeException(e);

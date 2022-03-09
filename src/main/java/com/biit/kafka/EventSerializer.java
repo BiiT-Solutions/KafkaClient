@@ -12,12 +12,7 @@ import org.apache.kafka.common.serialization.Serializer;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.time.format.DateTimeFormatter;
 
 import static com.biit.cipher.EncryptionConfiguration.encryptionKey;
@@ -59,8 +54,7 @@ public class EventSerializer<T> implements Serializer<T> {
                     KafkaLogger.debug(this.getClass(), "Encrypted as '{}'.", byteArrayToHex(encryptedData));
                 }
                 return encryptedData;
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
-                    NoSuchPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+            } catch (BadPaddingException | IllegalBlockSizeException e) {
                 CipherInitializer.resetCipherForEncrypt();
                 throw new RuntimeException(e);
             }
