@@ -1,6 +1,6 @@
 package com.biit.kafka.producers;
 
-import com.biit.kafka.KafkaConfig;
+import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.logger.KafkaLogger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;

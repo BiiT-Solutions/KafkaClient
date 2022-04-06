@@ -47,7 +47,7 @@ public class EventDeserializer<T> implements Deserializer<T> {
         try {
             if (KafkaLogger.isDebugEnabled()) {
                 KafkaLogger.debug(this.getClass(), "Received event '{}' -> '{}'", byteArrayToHex(bytes),
-                        new String(bytes), StandardCharsets.UTF_8);
+                        new String(bytes, StandardCharsets.UTF_8));
             }
             String data = new String(decrypt(bytes), StandardCharsets.UTF_8);
             return getObjectMapper().readValue(data, clazz);

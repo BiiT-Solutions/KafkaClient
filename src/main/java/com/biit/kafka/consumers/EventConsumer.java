@@ -1,6 +1,6 @@
 package com.biit.kafka.consumers;
 
-import com.biit.kafka.KafkaConfig;
+import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.logger.KafkaLogger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;

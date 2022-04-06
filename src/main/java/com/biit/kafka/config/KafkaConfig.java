@@ -1,5 +1,7 @@
-package com.biit.kafka;
+package com.biit.kafka.config;
 
+import com.biit.kafka.EventDeserializer;
+import com.biit.kafka.FailedEventDeserializer;
 import com.biit.kafka.logger.KafkaLogger;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
