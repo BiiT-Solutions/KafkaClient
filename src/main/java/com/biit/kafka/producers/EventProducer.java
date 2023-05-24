@@ -9,10 +9,10 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-public abstract class EventProducer<T> {
+public abstract class EventProducer<E> {
 
     private final KafkaConfig kafkaConfig;
-    private KafkaTemplate<String, T> eventTemplate;
+    private KafkaTemplate<String, E> eventTemplate;
 
     @Value("${kafka.topic:}")
     private String kafkaTopic;
@@ -22,29 +22,29 @@ public abstract class EventProducer<T> {
     }
 
 
-    public void sendFact(T fact) {
-        final ListenableFuture<SendResult<String, T>> future = getEventTemplate().send(kafkaTopic, fact);
-        future.addCallback(new ListenableFutureCallback<SendResult<String, T>>() {
+    public void sendEvent(E event) {
+        final ListenableFuture<SendResult<String, E>> future = getEventTemplate().send(kafkaTopic, event);
+        future.addCallback(new ListenableFutureCallback<>() {
 
             @Override
-            public void onSuccess(SendResult<String, T> result) {
+            public void onSuccess(SendResult<String, E> result) {
                 if (result != null) {
-                    KafkaLogger.debug(this.getClass(), "Sent fact '{}' with offset '{}'.", fact,
+                    KafkaLogger.debug(this.getClass(), "Sent event '{}' with offset '{}'.", event,
                             result.getRecordMetadata().offset());
                 } else {
-                    KafkaLogger.warning(this.getClass(), "Sent fact '{}' with no result.", fact);
+                    KafkaLogger.warning(this.getClass(), "Sent event '{}' with no result.", event);
                 }
             }
 
             @Override
             public void onFailure(Throwable ex) {
-                KafkaLogger.severe(this.getClass(), "\"Unable to send fact '{}' due to '{}'", fact,
+                KafkaLogger.severe(this.getClass(), "Unable to send event '{}' due to '{}'", event,
                         ex.getMessage());
             }
         });
     }
 
-    protected KafkaTemplate<String, T> getEventTemplate() {
+    protected KafkaTemplate<String, E> getEventTemplate() {
         if (eventTemplate == null) {
             eventTemplate = new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(kafkaConfig.getProperties()));
         }

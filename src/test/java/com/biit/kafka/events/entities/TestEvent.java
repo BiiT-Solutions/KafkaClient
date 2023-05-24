@@ -1,4 +1,4 @@
-package com.biit.kafka;
+package com.biit.kafka.events.entities;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

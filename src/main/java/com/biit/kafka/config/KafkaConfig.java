@@ -1,18 +1,20 @@
 package com.biit.kafka.config;
 
-import com.biit.kafka.EventDeserializer;
 import com.biit.kafka.FailedEventDeserializer;
 import com.biit.kafka.logger.KafkaLogger;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KafkaConfig {
+public abstract class KafkaConfig {
     private static final String MAX_FETCH_SIZE = "20971520"; //20MB
 
     @Value("${kafka.topic:}")
@@ -39,6 +41,10 @@ public class KafkaConfig {
     @Value("${kafka.value.deserializer:}")
     private String kafkaValueDeserializer;
 
+    protected abstract Class<?> getEventDeserializerClass();
+
+    private SecureRandom secureRandom = new SecureRandom();
+
     public Map<String, Object> getProperties() {
         final Map<String, Object> props = new HashMap<>();
         if (kafkaBootstrapServers != null && !kafkaBootstrapServers.isEmpty()) {
@@ -48,7 +54,7 @@ public class KafkaConfig {
         if (kafkaClientId != null && !kafkaClientId.isEmpty()) {
             props.put(ConsumerConfig.CLIENT_ID_CONFIG, "ID" + kafkaClientId);
         } else {
-            props.put(ConsumerConfig.CLIENT_ID_CONFIG, "ID" + Math.abs(new SecureRandom().nextInt(Integer.MAX_VALUE)));
+            props.put(ConsumerConfig.CLIENT_ID_CONFIG, "ID" + Math.abs(secureRandom.nextInt(Integer.MAX_VALUE)));
         }
         if (kafkaGroupId != null && !kafkaGroupId.isEmpty()) {
             props.put(ConsumerConfig.GROUP_ID_CONFIG, "ID" + kafkaGroupId);
@@ -68,9 +74,24 @@ public class KafkaConfig {
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MAX_FETCH_SIZE);
         props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, MAX_FETCH_SIZE);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, EventDeserializer.class);
+        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, getEventDeserializerClass());
         props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
         return props;
+    }
+
+    /**
+     * With AdminClient from Kafka, the topics are generated programmatically from a bean.
+     *
+     * @return
+     */
+    @Bean
+    public KafkaAdmin kafkaAdmin() {
+        return new KafkaAdmin(getProperties());
+    }
+
+    @Bean
+    public NewTopic createTopic() {
+        return new NewTopic(kafkaTopic, 1, (short) 1);
     }
 
 }

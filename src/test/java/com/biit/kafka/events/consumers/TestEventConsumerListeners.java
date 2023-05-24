@@ -1,6 +1,7 @@
-package com.biit.kafka.consumers;
+package com.biit.kafka.events.consumers;
 
-import com.biit.kafka.TestEvent;
+import com.biit.kafka.consumers.EventListener;
+import com.biit.kafka.events.entities.TestEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -9,7 +10,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 @Configuration
 public class TestEventConsumerListeners extends EventListener<TestEvent> {
 
-    @KafkaListener(topics = "${kafka.topic}", groupId = "1", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}", containerFactory = "eventListenerContainerFactory")
+    @KafkaListener(topics = "${kafka.topic}", groupId = "${kafka.group.id}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}", containerFactory = "eventListenerContainerFactory")
     public void eventsListener(TestEvent event) {
         super.eventsListener(event);
     }

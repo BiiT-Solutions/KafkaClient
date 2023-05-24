@@ -4,7 +4,7 @@
     <groupId>com.biit</groupId>
     <artifactId>kafka-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <name>Kafka client</name>
     <description>Client used to communicate with the Kafka server.</description>
 
@@ -33,18 +33,6 @@
         <developerConnection>scm:git:git.biit-solutions.com:BiiT/KafkaClient.git</developerConnection>
         <tag>FactManager</tag>
     </scm>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.jdk.version>1.8</java.jdk.version>
-        <plugin.compiler.version>2.3.2</plugin.compiler.version>
-        <plugin.exec.version>1.2.1</plugin.exec.version>
-        <maven-surefire.version>2.17</maven-surefire.version>
-        <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
-        <maven-release-plugin.version>2.5.1</maven-release-plugin.version>
-        <maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
-        <project.scm.id>git</project.scm.id>
-    </properties>
 
     <dependencies>
         <!-- File access and logger -->
@@ -75,11 +63,19 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.confluent.ksql</groupId>
+            <artifactId>ksqldb-api-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
@@ -88,7 +84,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.13.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -110,6 +105,12 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -119,10 +120,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${plugin.compiler.version}</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${java.jdk.version}</source>
-                    <target>${java.jdk.version}</target>
+                    <source>${java-latest.jdk.version}</source>
+                    <target>${java-latest.jdk.version}</target>
                 </configuration>
             </plugin>
             <plugin>

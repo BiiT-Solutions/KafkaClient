@@ -24,7 +24,7 @@ public class EventDeserializer<T> implements Deserializer<T> {
             new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(EventSerializer.DATETIME_FORMAT));
 
     private ObjectMapper objectMapper;
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
     protected EventDeserializer(Class<T> clazz) {
         this.clazz = clazz;
