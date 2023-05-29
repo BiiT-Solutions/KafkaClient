@@ -1,6 +1,7 @@
 package com.biit.kafka.tests;
 
 import com.biit.kafka.events.KafkaEventTemplate;
+import com.biit.kafka.events.consumers.TestHistoricalEventConsumer;
 import com.biit.kafka.events.consumers.TestTemplateEventConsumerListeners;
 import com.biit.kafka.events.entities.TestEvent;
 import com.biit.kafka.events.entities.TestPayload;
@@ -13,6 +14,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static org.awaitility.Awaitility.await;
 
@@ -28,6 +30,9 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
     @Autowired
     private TestTemplateEventConsumerListeners testTemplateEventConsumerListeners;
 
+    @Autowired
+    private TestHistoricalEventConsumer testHistoricalEventConsumer;
+
     private String receivedPayload = null;
 
 
@@ -39,7 +44,7 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setListener() {
-        testTemplateEventConsumerListeners.addListener(event ->  {
+        testTemplateEventConsumerListeners.addListener(event -> {
             System.out.println("########################### EVENT RECEIVED ###########################");
             this.receivedPayload = event.getPayload();
         });
@@ -50,5 +55,10 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
         kafkaTemplate.send(new TestEvent(generatePayload(0)));
         await().atMost(Duration.ofMinutes(3)).untilAsserted(() ->
                 Assert.assertNotNull(receivedPayload));
+    }
+
+    @Test(dependsOnMethods = "produceEvents")
+    public void historicalData() {
+        Assert.assertEquals(testHistoricalEventConsumer.getEvents(LocalDateTime.now().minusMinutes(1), Duration.ofHours(1)).size(), 1);
     }
 }

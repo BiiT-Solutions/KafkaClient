@@ -3,13 +3,11 @@
     <test name="D3-clientTests" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="kafkaEvents"/>
                 <include name="kafkaTemplateEvents"/>
                 <include name="ksqlClient"/>
             </run>
         </groups>
         <classes>
-            <class name="com.biit.kafka.tests.KafkaTests"/>
             <class name="com.biit.kafka.tests.KafkaTemplateTests"/>
             <class name="com.biit.kafka.tests.KsqlClientTest"/>
         </classes>

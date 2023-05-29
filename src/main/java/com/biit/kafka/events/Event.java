@@ -1,6 +1,7 @@
 package com.biit.kafka.events;
 
 
+import com.biit.kafka.exceptions.InvalidEventException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;

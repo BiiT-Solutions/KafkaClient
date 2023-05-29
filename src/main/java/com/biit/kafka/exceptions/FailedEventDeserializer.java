@@ -1,4 +1,4 @@
-package com.biit.kafka;
+package com.biit.kafka.exceptions;
 
 import com.biit.kafka.logger.KafkaLogger;
 import org.springframework.kafka.support.serializer.FailedDeserializationInfo;

@@ -1,14 +1,16 @@
-package com.biit.kafka;
+package com.biit.kafka.consumers;
 
 import com.biit.cipher.CipherInitializer;
 import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -18,16 +20,17 @@ import java.time.format.DateTimeFormatter;
 
 import static com.biit.cipher.EncryptionConfiguration.encryptionKey;
 
-
+@Component
 public class EventDeserializer<T> implements Deserializer<T> {
+    public static final String DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss.SSS";
     public static final LocalDateTimeDeserializer LOCAL_DATETIME_SERIALIZER =
-            new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(EventSerializer.DATETIME_FORMAT));
+            new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATETIME_FORMAT));
 
     private ObjectMapper objectMapper;
-    private final Class<T> clazz;
 
-    protected EventDeserializer(Class<T> clazz) {
-        this.clazz = clazz;
+    protected TypeReference<T> getJsonParser() {
+        return new TypeReference<>() {
+        };
     }
 
     private ObjectMapper getObjectMapper() {
@@ -50,7 +53,7 @@ public class EventDeserializer<T> implements Deserializer<T> {
                         new String(bytes, StandardCharsets.UTF_8));
             }
             String data = new String(decrypt(bytes), StandardCharsets.UTF_8);
-            return getObjectMapper().readValue(data, clazz);
+            return getObjectMapper().readValue(data, getJsonParser());
         } catch (IllegalArgumentException | JsonProcessingException e) {
             KafkaLogger.debug(this.getClass(), "Not a valid event.");
         }
@@ -84,3 +87,4 @@ public class EventDeserializer<T> implements Deserializer<T> {
         return sb.toString();
     }
 }
+

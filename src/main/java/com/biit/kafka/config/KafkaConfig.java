@@ -1,12 +1,13 @@
 package com.biit.kafka.config;
 
-import com.biit.kafka.FailedEventDeserializer;
+import com.biit.kafka.exceptions.FailedEventDeserializer;
 import com.biit.kafka.logger.KafkaLogger;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
@@ -17,10 +18,9 @@ import java.util.Map;
 
 /**
  * Generates the configuration used later by the consumer / producers.
- *
- * @param <T>
  */
-public abstract class KafkaConfig {
+@Configuration
+public class KafkaConfig {
     private static final String MAX_FETCH_SIZE = "20971520"; //20MB
 
     @Value("${kafka.topic:}")
@@ -46,8 +46,6 @@ public abstract class KafkaConfig {
 
     @Value("${kafka.value.deserializer:}")
     private String kafkaValueDeserializer;
-
-    protected abstract Class<?> getEventDeserializerClass();
 
     private final SecureRandom secureRandom = new SecureRandom();
 
@@ -76,12 +74,12 @@ public abstract class KafkaConfig {
         }
         if (kafkaValueSerializer != null && !kafkaValueSerializer.isEmpty()) {
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, kafkaValueSerializer);
+        } else {
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         }
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MAX_FETCH_SIZE);
         props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, MAX_FETCH_SIZE);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, getEventDeserializerClass());
         props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
         return props;
     }

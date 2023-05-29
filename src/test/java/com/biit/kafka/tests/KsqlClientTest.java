@@ -1,6 +1,6 @@
 package com.biit.kafka.tests;
 
-import com.biit.kafka.KafkaTestConfig;
+import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.ksql.KsqlClient;
 import com.biit.kafka.ksql.entities.Alert;
 import com.biit.kafka.ksql.entities.RowSubscriber;
@@ -64,7 +64,7 @@ public class KsqlClientTest extends AbstractTestNGSpringContextTests {
     private KsqlClient client;
 
     @Autowired
-    private KafkaTestConfig kafkaTestConfig;
+    private KafkaConfig kafkaConfig;
 
     private RowSubscriber<Alert> alertSubscriber;
 

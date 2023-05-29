@@ -1,4 +1,4 @@
-package com.biit.kafka.events;
+package com.biit.kafka.exceptions;
 
 public class InvalidEventException extends RuntimeException {
 

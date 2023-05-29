@@ -4,17 +4,9 @@ import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -22,7 +14,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public abstract class EventConsumer<T> {
+public abstract class HistoricalEventConsumer<T> {
     private final static int MAX_EMPTY_POLLING = 5;
 
     private final KafkaConfig kafkaConfig;
@@ -37,32 +29,10 @@ public abstract class EventConsumer<T> {
         void received(T entity);
     }
 
-    public EventConsumer(Class<T> type, KafkaConfig kafkaConfig) {
+    public HistoricalEventConsumer(Class<T> type, KafkaConfig kafkaConfig) {
         this.kafkaConfig = kafkaConfig;
         this.type = type;
         objectMapper = new ObjectMapper();
-    }
-
-    public ConsumerFactory<String, T> typeConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(kafkaConfig.getProperties(),
-                new StringDeserializer(),
-                new JsonDeserializer<>(type));
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, T> eventListenerContainerFactory() {
-        KafkaLogger.debug(this.getClass().getName(), "Starting the Container Factory");
-        try {
-            final ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
-            factory.setConsumerFactory(typeConsumerFactory());
-            return factory;
-        } catch (Exception e) {
-            KafkaLogger.errorMessage(this.getClass().getName(), "Error starting the Container Factory");
-            KafkaLogger.errorMessage(this.getClass().getName(), e.getMessage());
-        } finally {
-            KafkaLogger.debug(this.getClass().getName(), "Started Container Factory");
-        }
-        return null;
     }
 
 
@@ -98,7 +68,10 @@ public abstract class EventConsumer<T> {
             throw new UnsupportedOperationException("Kafka consumer thread already running");
         }
 
-        try (org.apache.kafka.clients.consumer.Consumer<?, String> kafkaConsumer = new KafkaConsumer<>(kafkaConfig.getProperties())) {
+        final Map<String, Object> properties = new HashMap<>(kafkaConfig.getProperties());
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        try (org.apache.kafka.clients.consumer.Consumer<?, String> kafkaConsumer = new KafkaConsumer<>(properties)) {
             if (startingTime != null) {
                 final List<TopicPartition> topicPartitions = new ArrayList<>(topics.size());
                 final Map<TopicPartition, Long> timestampsToSearch = new HashMap<>();
@@ -154,6 +127,17 @@ public abstract class EventConsumer<T> {
     }
 
     /**
+     * Retrieves a list of events synchronously. Users spring boot properties for the topics.
+     *
+     * @param startingTime starting point in time.
+     * @param duration     the duration.
+     * @return a collection of events.
+     */
+    public Collection<T> getEvents(LocalDateTime startingTime, Duration duration) {
+        return getEvents(Collections.singletonList(kafkaConfig.getKafkaTopic()), startingTime, duration);
+    }
+
+    /**
      * Retrieves a list of events synchronously.
      *
      * @param topics       kafka topics.
@@ -163,7 +147,10 @@ public abstract class EventConsumer<T> {
      */
     public Collection<T> getEvents(Collection<String> topics, LocalDateTime startingTime, Duration duration) {
         final List<T> result = new ArrayList<>();
-        final org.apache.kafka.clients.consumer.Consumer<?, String> kafkaConsumer = new KafkaConsumer<>(kafkaConfig.getProperties());
+        final Map<String, Object> properties = new HashMap<>(kafkaConfig.getProperties());
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        final org.apache.kafka.clients.consumer.Consumer<?, String> kafkaConsumer = new KafkaConsumer<>(properties);
         final List<TopicPartition> topicPartitions = new ArrayList<>(topics.size());
         final Map<TopicPartition, Long> beginningTimestamps = new HashMap<>();
         final long startingTimeAsMilliseconds = Timestamp.valueOf(startingTime).getTime();
@@ -219,6 +206,9 @@ public abstract class EventConsumer<T> {
     }
 
     public Duration getPollingDuration() {
+        if (pollingDuration == null) {
+            return Duration.ofMillis(100);
+        }
         return pollingDuration;
     }
 
@@ -242,5 +232,4 @@ public abstract class EventConsumer<T> {
     private void setThread(Thread thread) {
         this.thread = thread;
     }
-
 }
