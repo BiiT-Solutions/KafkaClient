@@ -5,12 +5,13 @@ import com.biit.kafka.logger.KafkaLogger;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -65,17 +66,23 @@ public class KafkaConfig {
         }
         if (kafkaKeyDeserializer != null && !kafkaKeyDeserializer.isEmpty()) {
             props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaKeyDeserializer);
+        } else {
+            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         }
         if (kafkaValueDeserializer != null && !kafkaValueDeserializer.isEmpty()) {
             props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, kafkaValueDeserializer);
+        } else {
+            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         }
         if (kafkaKeySerializer != null && !kafkaKeySerializer.isEmpty()) {
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, kafkaKeySerializer);
+        } else {
+            props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         }
         if (kafkaValueSerializer != null && !kafkaValueSerializer.isEmpty()) {
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, kafkaValueSerializer);
         } else {
-            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+            props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         }
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MAX_FETCH_SIZE);
         props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, MAX_FETCH_SIZE);

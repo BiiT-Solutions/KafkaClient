@@ -33,7 +33,7 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
     @Autowired
     private TestHistoricalEventConsumer testHistoricalEventConsumer;
 
-    private String receivedPayload = null;
+    private TestPayload eventPayload = null;
 
 
     private TestPayload generatePayload(int value) {
@@ -46,19 +46,19 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
     public void setListener() {
         testTemplateEventConsumerListeners.addListener(event -> {
             System.out.println("########################### EVENT RECEIVED ###########################");
-            this.receivedPayload = event.getPayload();
+            this.eventPayload = event.getEntity();
         });
     }
 
     @Test
     public void produceEvents() {
         kafkaTemplate.send(new TestEvent(generatePayload(0)));
-        await().atMost(Duration.ofMinutes(3)).untilAsserted(() ->
-                Assert.assertNotNull(receivedPayload));
+        await().atMost(Duration.ofMinutes(1)).untilAsserted(() ->
+                Assert.assertNotNull(eventPayload));
     }
 
     @Test(dependsOnMethods = "produceEvents")
     public void historicalData() {
-        Assert.assertEquals(testHistoricalEventConsumer.getEvents(LocalDateTime.now().minusMinutes(1), Duration.ofHours(1)).size(), 1);
+        Assert.assertEquals(testHistoricalEventConsumer.getEvents(LocalDateTime.now().minusSeconds(5), Duration.ofHours(1)).size(), 1);
     }
 }

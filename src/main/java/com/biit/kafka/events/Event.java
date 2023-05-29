@@ -1,41 +1,74 @@
 package com.biit.kafka.events;
 
 
+import com.biit.database.encryption.LocalDateTimeCryptoConverter;
+import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.kafka.exceptions.InvalidEventException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import org.apache.kafka.common.Uuid;
 
-public class Event<ENTITY> {
+import javax.persistence.Convert;
+import java.time.LocalDateTime;
+
+public abstract class Event<ENTITY> {
+
+    @Convert(converter = StringCryptoConverter.class)
     private String id;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String to;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String replying;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String replyTo;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String sessionId;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String messageId;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String correlationId;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String subject;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String contentType;
 
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime createAt;
+
     private transient ENTITY entity;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String payload;
 
-    public Event(){
+    public Event() {
         super();
     }
 
     public Event(ENTITY entity) {
         this();
         setEntity(entity);
+        id = Uuid.randomUuid().toString();
+        createAt = LocalDateTime.now();
     }
 
-
-    protected TypeReference<ENTITY> getJsonParser() {
-        return new TypeReference<>() {
-        };
-    }
+    protected abstract TypeReference<ENTITY> getJsonParser();
 
     @JsonIgnore
     public void setEntity(ENTITY entity) {
@@ -106,5 +139,45 @@ public class Event<ENTITY> {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getReplying() {
+        return replying;
+    }
+
+    public void setReplying(String replying) {
+        this.replying = replying;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
     }
 }
