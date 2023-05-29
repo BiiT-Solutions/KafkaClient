@@ -1,4 +1,4 @@
-package com.biit.kafka.ksql.entities;
+package com.biit.kafka.ksql;
 
 import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RowSubscriber<T> implements Subscriber<Row> {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
     private final Class<T> clazz;
 
@@ -23,9 +23,16 @@ public class RowSubscriber<T> implements Subscriber<Row> {
         this.clazz = clazz;
     }
 
+    private ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
+        return objectMapper;
+    }
+
     @Override
     public synchronized void onSubscribe(Subscription subscription) {
-        KafkaLogger.info(this.getClass(), "Subscriber is subscribed.");
+        KafkaLogger.debug(this.getClass(), "Subscriber is subscribed.");
         this.subscription = subscription;
         subscription.request(1);
     }
@@ -33,9 +40,9 @@ public class RowSubscriber<T> implements Subscriber<Row> {
     @Override
     public synchronized void onNext(Row row) {
         String jsonString = row.asObject().toJsonString();
-        KafkaLogger.info(this.getClass(), "Row JSON: {}", jsonString);
+        KafkaLogger.debug(this.getClass(), "Row JSON: {}", jsonString);
         try {
-            T item = OBJECT_MAPPER.readValue(jsonString, this.clazz);
+            T item = getObjectMapper().readValue(jsonString, this.clazz);
             KafkaLogger.info(this.getClass(), "Item: {}", item);
             consumedItems.add(item);
         } catch (JsonProcessingException e) {
@@ -53,6 +60,6 @@ public class RowSubscriber<T> implements Subscriber<Row> {
 
     @Override
     public synchronized void onComplete() {
-        KafkaLogger.info(this.getClass(), "Query has ended.");
+        KafkaLogger.debug(this.getClass(), "Query has ended.");
     }
 }

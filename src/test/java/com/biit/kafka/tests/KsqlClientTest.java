@@ -3,7 +3,7 @@ package com.biit.kafka.tests;
 import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.ksql.KsqlClient;
 import com.biit.kafka.ksql.entities.Alert;
-import com.biit.kafka.ksql.entities.RowSubscriber;
+import com.biit.kafka.ksql.RowSubscriber;
 import io.confluent.ksql.api.client.KsqlObject;
 import io.confluent.ksql.api.client.QueryInfo;
 import io.confluent.ksql.api.client.Row;
