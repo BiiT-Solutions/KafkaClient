@@ -23,7 +23,11 @@ public abstract class EventProducer<E> {
 
 
     public void sendEvent(E event) {
-        final ListenableFuture<SendResult<String, E>> future = getEventTemplate().send(kafkaTopic, event);
+        sendEvent(kafkaTopic, event);
+    }
+
+    public void sendEvent(String topic, E event) {
+        final ListenableFuture<SendResult<String, E>> future = getEventTemplate().send(topic, event);
         future.addCallback(new ListenableFutureCallback<>() {
 
             @Override

@@ -1,7 +1,7 @@
 package com.biit.kafka.tests;
 
 import com.biit.cipher.CipherInitializer;
-import com.biit.kafka.events.entities.TestEvent;
+import com.biit.kafka.events.entities.TestPayload;
 import com.biit.kafka.events.consumers.TestEventConsumer;
 import com.biit.kafka.events.consumers.TestEventConsumer2;
 import com.biit.kafka.events.consumers.TestEventConsumerListeners;
@@ -56,15 +56,15 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
 
     private ObjectMapper objectMapper;
 
-    private TestEvent generateEvent(int value) {
-        TestEvent testEvent = new TestEvent();
-        testEvent.setValue("Event" + value);
-        return testEvent;
+    private TestPayload generateEvent(int value) {
+        TestPayload testPayload = new TestPayload();
+        testPayload.setValue("Event" + value);
+        return testPayload;
     }
 
     @Test
-    public TestEvent generateEvent(int value, LocalDateTime minTimestamp, LocalDateTime maxTimestamp) {
-        TestEvent TestEvent = generateEvent(value);
+    public TestPayload generateEvent(int value, LocalDateTime minTimestamp, LocalDateTime maxTimestamp) {
+        TestPayload TestPayload = generateEvent(value);
 
         //Create a random day.
         // create ZoneId
@@ -72,8 +72,8 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         long randomSecond = ThreadLocalRandom.current().nextLong(minTimestamp.toEpochSecond(zone), maxTimestamp.toEpochSecond(zone));
         LocalDateTime randomDate = LocalDateTime.ofEpochSecond(randomSecond, 0, zone);
 
-        TestEvent.setCreatedAt(randomDate);
-        return TestEvent;
+        TestPayload.setCreatedAt(randomDate);
+        return TestPayload;
     }
 
     public static byte[] hexStringToByteArray(String s) {
@@ -95,13 +95,13 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public synchronized void factTest() throws InterruptedException {
-        Set<TestEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
-        Set<TestEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
+        Set<TestPayload> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
+        Set<TestPayload> producerEvents = new HashSet<>(EVENTS_QUANTITY);
         //Store received events into set.
         testEventConsumerListeners.addListener(consumerEvents::add);
 
         for (int i = 0; i < EVENTS_QUANTITY; i++) {
-            TestEvent generatedEvent = generateEvent(i);
+            TestPayload generatedEvent = generateEvent(i);
             producerEvents.add(generatedEvent);
             testEventProducer.sendEvent(generatedEvent);
         }
@@ -113,15 +113,15 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public synchronized void multipleProducerTest() throws InterruptedException {
-        Set<TestEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY * 2));
-        Set<TestEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
-        Set<TestEvent> producerEvents2 = new HashSet<>(EVENTS_QUANTITY);
+        Set<TestPayload> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY * 2));
+        Set<TestPayload> producerEvents = new HashSet<>(EVENTS_QUANTITY);
+        Set<TestPayload> producerEvents2 = new HashSet<>(EVENTS_QUANTITY);
         testEventConsumerListeners.addListener(consumerEvents::add);
         for (int i = 0; i < EVENTS_QUANTITY; i++) {
-            TestEvent generatedEvent = generateEvent(i);
+            TestPayload generatedEvent = generateEvent(i);
             producerEvents.add(generatedEvent);
             testEventProducer.sendEvent(generatedEvent);
-            TestEvent generatedEvent2 = generateEvent(i);
+            TestPayload generatedEvent2 = generateEvent(i);
             producerEvents2.add(generatedEvent2);
             testEventProducer2.sendEvent(generatedEvent2);
         }
@@ -132,14 +132,14 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public synchronized void multipleConsumerTest() throws InterruptedException {
-        Set<TestEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
-        Set<TestEvent> consumerEvents2 = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
-        Set<TestEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
+        Set<TestPayload> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
+        Set<TestPayload> consumerEvents2 = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
+        Set<TestPayload> producerEvents = new HashSet<>(EVENTS_QUANTITY);
         testEventConsumerListeners.addListener(consumerEvents::add);
         testEventConsumerListeners2.addListener(consumerEvents2::add);
 
         for (int i = 0; i < EVENTS_QUANTITY; i++) {
-            TestEvent generatedEvent = generateEvent(i);
+            TestPayload generatedEvent = generateEvent(i);
             producerEvents.add(generatedEvent);
             testEventProducer.sendEvent(generatedEvent);
         }
@@ -153,8 +153,8 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         LocalDateTime initialDate = LocalDateTime.of(2022, Calendar.FEBRUARY, 1, 0, 0, 0);
         LocalDateTime finalDate = LocalDateTime.of(2022, Calendar.MAY, 1, 23, 59, 59);
 
-        Set<TestEvent> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
-        Set<TestEvent> producerEvents = new HashSet<>(EVENTS_QUANTITY);
+        Set<TestPayload> consumerEvents = Collections.synchronizedSet(new HashSet<>(EVENTS_QUANTITY));
+        Set<TestPayload> producerEvents = new HashSet<>(EVENTS_QUANTITY);
         testEventConsumerListeners.addListener(fact -> {
             if (fact.getCreatedAt().isAfter(initialDate) && fact.getCreatedAt().isBefore(finalDate)) {
                 consumerEvents.add(fact);
@@ -162,7 +162,7 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         });
 
         for (int i = 0; i < EVENTS_QUANTITY; i++) {
-            TestEvent eventInRange = generateEvent(i, initialDate, finalDate);
+            TestPayload eventInRange = generateEvent(i, initialDate, finalDate);
             producerEvents.add(eventInRange);
             testEventProducer.sendEvent(eventInRange);
             testEventProducer.sendEvent(eventInRange);
@@ -171,7 +171,7 @@ public class KafkaTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(consumerEvents, producerEvents);
     }
 
-    private void wait(Set<TestEvent> consumerEvents) throws InterruptedException {
+    private void wait(Set<TestPayload> consumerEvents) throws InterruptedException {
         int i = 0;
         do {
             wait(1000);

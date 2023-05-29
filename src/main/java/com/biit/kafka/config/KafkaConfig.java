@@ -9,11 +9,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Generates the configuration used later by the consumer / producers.
+ *
+ * @param <T>
+ */
 public abstract class KafkaConfig {
     private static final String MAX_FETCH_SIZE = "20971520"; //20MB
 
@@ -43,7 +49,7 @@ public abstract class KafkaConfig {
 
     protected abstract Class<?> getEventDeserializerClass();
 
-    private SecureRandom secureRandom = new SecureRandom();
+    private final SecureRandom secureRandom = new SecureRandom();
 
     public Map<String, Object> getProperties() {
         final Map<String, Object> props = new HashMap<>();
@@ -71,6 +77,7 @@ public abstract class KafkaConfig {
         if (kafkaValueSerializer != null && !kafkaValueSerializer.isEmpty()) {
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, kafkaValueSerializer);
         }
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MAX_FETCH_SIZE);
         props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, MAX_FETCH_SIZE);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
@@ -79,8 +86,40 @@ public abstract class KafkaConfig {
         return props;
     }
 
+    public String getKafkaTopic() {
+        return kafkaTopic;
+    }
+
+    public void setKafkaTopic(String kafkaTopic) {
+        this.kafkaTopic = kafkaTopic;
+    }
+
+    public String getKafkaBootstrapServers() {
+        return kafkaBootstrapServers;
+    }
+
+    public void setKafkaBootstrapServers(String kafkaBootstrapServers) {
+        this.kafkaBootstrapServers = kafkaBootstrapServers;
+    }
+
+    public String getKafkaClientId() {
+        return kafkaClientId;
+    }
+
+    public void setKafkaClientId(String kafkaClientId) {
+        this.kafkaClientId = kafkaClientId;
+    }
+
+    public String getKafkaGroupId() {
+        return kafkaGroupId;
+    }
+
+    public void setKafkaGroupId(String kafkaGroupId) {
+        this.kafkaGroupId = kafkaGroupId;
+    }
+
     /**
-     * With AdminClient from Kafka, the topics are generated programmatically from a bean.
+     * With AdminClient from Kafka, the topics are generated programmatically as a bean.
      *
      * @return
      */
