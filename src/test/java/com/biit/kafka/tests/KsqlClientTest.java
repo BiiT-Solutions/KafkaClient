@@ -2,8 +2,8 @@ package com.biit.kafka.tests;
 
 import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.ksql.KsqlClient;
-import com.biit.kafka.ksql.entities.Alert;
 import com.biit.kafka.ksql.RowSubscriber;
+import com.biit.kafka.ksql.entities.Alert;
 import io.confluent.ksql.api.client.KsqlObject;
 import io.confluent.ksql.api.client.QueryInfo;
 import io.confluent.ksql.api.client.Row;
@@ -37,7 +37,7 @@ public class KsqlClientTest extends AbstractTestNGSpringContextTests {
     private static final String READINGS_STREAM = "readings";
 
     private static final String CREATE_READINGS_STREAM = """
-            CREATE STREAM readings (sensor_id VARCHAR KEY, timestamp VARCHAR, reading INT)
+            CREATE STREAM IF NOT EXISTS readings (sensor_id VARCHAR KEY, timestamp VARCHAR, reading INT)
             WITH (KAFKA_TOPIC = 'readings',
                 VALUE_FORMAT = 'JSON',
                 TIMESTAMP = 'timestamp',
@@ -46,7 +46,7 @@ public class KsqlClientTest extends AbstractTestNGSpringContextTests {
             """;
 
     private static final String CREATE_ALERTS_TABLE = """
-            CREATE TABLE alerts AS
+            CREATE TABLE IF NOT EXISTS alerts AS
               SELECT
                 sensor_id,
                 TIMESTAMPTOSTRING(WINDOWSTART, 'yyyy-MM-dd HH:mm:ss', 'UTC') AS start_period,
@@ -76,8 +76,8 @@ public class KsqlClientTest extends AbstractTestNGSpringContextTests {
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Persistent query not found")))
                 .thenCompose(id -> client.executeStatement("TERMINATE " + id + ";"))
-                .thenCompose(result -> client.executeStatement("DROP TABLE alerts DELETE TOPIC;"))
-                .thenCompose(result -> client.executeStatement("DROP STREAM readings DELETE TOPIC;"))
+                .thenCompose(result -> client.executeStatement("DROP TABLE IF EXISTS alerts DELETE TOPIC;"))
+                .thenCompose(result -> client.executeStatement("DROP STREAM IF EXISTS readings DELETE TOPIC;"))
                 .join();
     }
 
@@ -115,6 +115,15 @@ public class KsqlClientTest extends AbstractTestNGSpringContextTests {
     }
 
     @BeforeClass
+    private void cleanStreams() {
+        try {
+            deleteAlerts();
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    @BeforeClass(dependsOnMethods = "cleanStreams")
     private void prepareStreams() {
         createAlertsMaterializedView();
         alertSubscriber = new RowSubscriber<>(Alert.class);
