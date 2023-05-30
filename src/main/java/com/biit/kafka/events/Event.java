@@ -180,4 +180,11 @@ public abstract class Event<ENTITY> {
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "payload='" + payload + '\'' +
+                '}';
+    }
 }

@@ -13,3 +13,4 @@ tmp
 /release.properties
 *.iml
 Kafka.log
+.attach_*

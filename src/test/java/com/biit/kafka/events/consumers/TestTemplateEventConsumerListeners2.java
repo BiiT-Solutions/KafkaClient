@@ -8,9 +8,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 
 @EnableKafka
 @Configuration
-public class TestTemplateEventConsumerListeners extends EventListener<TestEvent> {
+public class TestTemplateEventConsumerListeners2 extends EventListener<TestEvent> {
 
-    @KafkaListener(topics = "${spring.kafka.topic}", groupId = "1", containerFactory = "templateEventListenerContainerFactory")
+    @KafkaListener(topics = "${spring.kafka.topic}", groupId = "2", containerFactory = "templateEventListenerContainerFactory")
     public void eventsListener(TestEvent event) {
         super.eventsListener(event);
     }

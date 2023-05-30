@@ -5,8 +5,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 
+@Component
 public class KafkaEventTemplate<K, V extends Event<?>> extends KafkaTemplate<K, V> {
     private final KafkaConfig kafkaConfig;
 
