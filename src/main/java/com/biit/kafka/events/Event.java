@@ -13,9 +13,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import jakarta.persistence.Convert;
 import org.apache.kafka.common.Uuid;
 
-import javax.persistence.Convert;
 import java.time.LocalDateTime;
 
 public abstract class Event<ENTITY> {

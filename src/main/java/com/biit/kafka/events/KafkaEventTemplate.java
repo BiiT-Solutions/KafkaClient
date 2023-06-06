@@ -6,7 +6,8 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
+
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class KafkaEventTemplate<K, V extends Event<?>> extends KafkaTemplate<K, V> {
@@ -17,7 +18,7 @@ public class KafkaEventTemplate<K, V extends Event<?>> extends KafkaTemplate<K, 
         this.kafkaConfig = kafkaConfig;
     }
 
-    public ListenableFuture<SendResult<K, V>> send(@Nullable V data) {
+    public CompletableFuture<SendResult<K, V>> send(@Nullable V data) {
         return super.send(kafkaConfig.getKafkaTopic(), data);
     }
 }
