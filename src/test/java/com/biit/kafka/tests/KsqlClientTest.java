@@ -136,7 +136,7 @@ public class KsqlClientTest extends AbstractTestNGSpringContextTests {
     @Test
     void givenSensorReadings_whenSubscribedToAlerts_thenAlertsAreConsumed() {
         await().atMost(Duration.ofMinutes(3)).untilAsserted(() ->
-                Assert.assertTrue(alertSubscriber.consumedItems
+                Assert.assertTrue(alertSubscriber.getConsumedItems()
                         .containsAll(Arrays.asList(
                                 expectedAlert("sensor-1", "2023-05-24 09:30:00", "2023-05-24 10:00:00", 28.0),
                                 expectedAlert("sensor-2", "2023-05-24 10:00:00", "2023-05-24 10:30:00", 26.0)

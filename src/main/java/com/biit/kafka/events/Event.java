@@ -52,6 +52,9 @@ public abstract class Event<ENTITY> {
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime createAt;
 
+    @Convert(converter = StringCryptoConverter.class)
+    private String createdBy;
+
     private transient ENTITY entity;
 
     @Convert(converter = StringCryptoConverter.class)
@@ -181,10 +184,18 @@ public abstract class Event<ENTITY> {
         this.createAt = createAt;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
     @Override
     public String toString() {
-        return "Event{" +
-                "payload='" + payload + '\'' +
-                '}';
+        return "Event{"
+                + "payload='" + payload + '\''
+                + '}';
     }
 }

@@ -17,10 +17,14 @@ public class RowSubscriber<T> implements Subscriber<Row> {
 
     private Subscription subscription;
 
-    public List<T> consumedItems = new ArrayList<>();
+    private final List<T> consumedItems = new ArrayList<>();
 
     public RowSubscriber(Class<T> clazz) {
         this.clazz = clazz;
+    }
+
+    public List<T> getConsumedItems() {
+        return consumedItems;
     }
 
     private ObjectMapper getObjectMapper() {

@@ -26,7 +26,8 @@ public abstract class EventListener<T> {
     }
 
     //These annotations are ignored. Here as future reference only. Use them on the child class.
-    @KafkaListener(topics = "${spring.kafka.topic}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}", containerFactory = "eventListenerContainerFactory")
+    @KafkaListener(topics = "${spring.kafka.topic}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}",
+            containerFactory = "eventListenerContainerFactory")
     public void eventsListener(T event) {
         KafkaLogger.debug(this.getClass().getName(), "Event received '{}'.", event.toString());
         listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event));

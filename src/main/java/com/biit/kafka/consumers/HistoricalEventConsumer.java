@@ -4,7 +4,11 @@ import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -12,10 +16,18 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class HistoricalEventConsumer<T> {
-    private final static int MAX_EMPTY_POLLING = 5;
+    private static final int MAX_EMPTY_POLLING = 5;
+    private static final int POLLING_DURATION = 100;
 
     private final KafkaConfig kafkaConfig;
     private final Class<T> type;
@@ -207,7 +219,7 @@ public abstract class HistoricalEventConsumer<T> {
 
     public Duration getPollingDuration() {
         if (pollingDuration == null) {
-            return Duration.ofMillis(100);
+            return Duration.ofMillis(POLLING_DURATION);
         }
         return pollingDuration;
     }
