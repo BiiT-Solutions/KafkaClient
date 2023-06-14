@@ -24,7 +24,7 @@ import java.util.Map;
 public class KafkaConfig {
     private static final String MAX_FETCH_SIZE = "20971520"; //20MB
     private static final int PARTITIONS = 10;
-    private static final int REPLICAS = 2;
+    private static final int REPLICAS = 1;
 
 
     @Value("${spring.kafka.topic:}")
