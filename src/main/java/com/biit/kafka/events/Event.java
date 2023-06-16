@@ -3,6 +3,7 @@ package com.biit.kafka.events;
 
 import com.biit.database.encryption.LocalDateTimeCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
+import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.kafka.exceptions.InvalidEventException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,6 +18,7 @@ import jakarta.persistence.Convert;
 import org.apache.kafka.common.Uuid;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public abstract class Event<ENTITY> {
 
@@ -32,14 +34,14 @@ public abstract class Event<ENTITY> {
     @Convert(converter = StringCryptoConverter.class)
     private String replyTo;
 
-    @Convert(converter = StringCryptoConverter.class)
-    private String sessionId;
+    @Convert(converter = UUIDCryptoConverter.class)
+    private UUID sessionId;
 
-    @Convert(converter = StringCryptoConverter.class)
-    private String messageId;
+    @Convert(converter = UUIDCryptoConverter.class)
+    private UUID messageId;
 
-    @Convert(converter = StringCryptoConverter.class)
-    private String correlationId;
+    @Convert(converter = UUIDCryptoConverter.class)
+    private UUID correlationId;
 
     @Convert(converter = StringCryptoConverter.class)
     private String subject;
@@ -128,11 +130,11 @@ public abstract class Event<ENTITY> {
         this.replyTo = replyTo;
     }
 
-    public String getSessionId() {
+    public UUID getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
+    public void setSessionId(UUID sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -152,19 +154,19 @@ public abstract class Event<ENTITY> {
         this.replying = replying;
     }
 
-    public String getMessageId() {
+    public UUID getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(String messageId) {
+    public void setMessageId(UUID messageId) {
         this.messageId = messageId;
     }
 
-    public String getCorrelationId() {
+    public UUID getCorrelationId() {
         return correlationId;
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(UUID correlationId) {
         this.correlationId = correlationId;
     }
 
