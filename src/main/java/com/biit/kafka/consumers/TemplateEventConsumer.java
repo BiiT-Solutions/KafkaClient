@@ -28,7 +28,7 @@ public class TemplateEventConsumer<V extends Event<?>> {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, V> templateEventListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, V> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        final ConcurrentKafkaListenerContainerFactory<String, V> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(typeConsumerFactory());
         return factory;
     }

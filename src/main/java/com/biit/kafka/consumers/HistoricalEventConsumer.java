@@ -88,7 +88,7 @@ public abstract class HistoricalEventConsumer<T> {
                 final List<TopicPartition> topicPartitions = new ArrayList<>(topics.size());
                 final Map<TopicPartition, Long> timestampsToSearch = new HashMap<>();
                 for (final String topic : topics) {
-                    TopicPartition topicPartition = new TopicPartition(topic, 0);
+                    final TopicPartition topicPartition = new TopicPartition(topic, 0);
                     timestampsToSearch.put(topicPartition, Timestamp.valueOf(startingTime).getTime());
                     topicPartitions.add(topicPartition);
                 }

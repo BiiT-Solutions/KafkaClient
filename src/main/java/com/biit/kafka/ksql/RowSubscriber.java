@@ -43,10 +43,10 @@ public class RowSubscriber<T> implements Subscriber<Row> {
 
     @Override
     public synchronized void onNext(Row row) {
-        String jsonString = row.asObject().toJsonString();
+        final String jsonString = row.asObject().toJsonString();
         KafkaLogger.debug(this.getClass(), "Row JSON: {}", jsonString);
         try {
-            T item = getObjectMapper().readValue(jsonString, this.clazz);
+            final T item = getObjectMapper().readValue(jsonString, this.clazz);
             KafkaLogger.info(this.getClass(), "Item: {}", item);
             consumedItems.add(item);
         } catch (JsonProcessingException e) {

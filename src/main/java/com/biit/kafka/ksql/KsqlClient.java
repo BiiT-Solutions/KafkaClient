@@ -33,7 +33,7 @@ public class KsqlClient {
             definedksqlHPort = DEFAULT_KSQL_PORT;
         }
 
-        ClientOptions options = ClientOptions.create()
+        final ClientOptions options = ClientOptions.create()
                 .setHost(ksqlHost)
                 .setPort(definedksqlHPort);
 

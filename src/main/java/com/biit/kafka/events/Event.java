@@ -47,6 +47,9 @@ public abstract class Event<ENTITY> {
     private String subject;
 
     @Convert(converter = StringCryptoConverter.class)
+    private String tenant;
+
+    @Convert(converter = StringCryptoConverter.class)
     private String contentType;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -192,6 +195,14 @@ public abstract class Event<ENTITY> {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
     }
 
     @Override

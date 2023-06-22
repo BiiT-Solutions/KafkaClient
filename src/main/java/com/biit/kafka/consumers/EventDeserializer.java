@@ -52,7 +52,7 @@ public class EventDeserializer<T> implements Deserializer<T> {
                 KafkaLogger.debug(this.getClass(), "Received event '{}' -> '{}'", byteArrayToHex(bytes),
                         new String(bytes, StandardCharsets.UTF_8));
             }
-            String data = new String(decrypt(bytes), StandardCharsets.UTF_8);
+            final String data = new String(decrypt(bytes), StandardCharsets.UTF_8);
             return getObjectMapper().readValue(data, getJsonParser());
         } catch (IllegalArgumentException | JsonProcessingException e) {
             KafkaLogger.debug(this.getClass(), "Not a valid event.");
@@ -66,7 +66,7 @@ public class EventDeserializer<T> implements Deserializer<T> {
                 if (KafkaLogger.isDebugEnabled()) {
                     KafkaLogger.debug(this.getClass(), "For decrypt '{}'.", byteArrayToHex(data));
                 }
-                byte[] decryptedData = CipherInitializer.getCipherForDecrypt().doFinal(data);
+                final byte[] decryptedData = CipherInitializer.getCipherForDecrypt().doFinal(data);
                 if (KafkaLogger.isDebugEnabled()) {
                     KafkaLogger.debug(this.getClass(), "Decrypted '{}'.", byteArrayToHex(decryptedData));
                 }
@@ -81,11 +81,11 @@ public class EventDeserializer<T> implements Deserializer<T> {
     }
 
     public static String byteArrayToHex(byte[] a) {
-        StringBuilder sb = new StringBuilder(a.length * 2);
+        final StringBuilder stringBuilder = new StringBuilder(a.length * 2);
         for (byte b : a) {
-            sb.append(String.format("%02x", b));
+            stringBuilder.append(String.format("%02x", b));
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 }
 
