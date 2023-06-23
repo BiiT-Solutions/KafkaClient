@@ -13,7 +13,12 @@ import org.springframework.messaging.handler.annotation.Header;
 public class TestTemplateEventConsumerListeners extends EventListener<TestEvent> {
 
     @KafkaListener(topics = "${spring.kafka.topic}", groupId = "1", containerFactory = "templateEventListenerContainerFactory")
-    public void eventsListener(TestEvent event, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-        super.eventsListener(event, topic);
+    public void eventsListener(TestEvent event,
+                               final @Header(KafkaHeaders.OFFSET) Integer offset,
+                               final @Header(value = KafkaHeaders.KEY, required = false) String key,
+                               final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
+                               final @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                               final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
+        super.eventsListener(event, offset, key, partition, topic, timeStamp);
     }
 }
