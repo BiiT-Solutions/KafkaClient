@@ -3,6 +3,7 @@ package com.biit.kafka.events;
 
 import com.biit.database.encryption.LocalDateTimeCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
+import com.biit.database.encryption.StringMapCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.kafka.exceptions.InvalidEventException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,6 +19,8 @@ import jakarta.persistence.Convert;
 import org.apache.kafka.common.Uuid;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class Event<ENTITY> {
@@ -33,6 +36,9 @@ public abstract class Event<ENTITY> {
 
     @Convert(converter = StringCryptoConverter.class)
     private String replyTo;
+
+    @Convert(converter = StringCryptoConverter.class)
+    private String replyToSessionId;
 
     @Convert(converter = UUIDCryptoConverter.class)
     private UUID sessionId;
@@ -55,6 +61,9 @@ public abstract class Event<ENTITY> {
     @Convert(converter = StringCryptoConverter.class)
     private String issuer;
 
+    @Convert(converter = StringCryptoConverter.class)
+    private String authorization;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Convert(converter = LocalDateTimeCryptoConverter.class)
@@ -68,8 +77,12 @@ public abstract class Event<ENTITY> {
     @Convert(converter = StringCryptoConverter.class)
     private String payload;
 
+    @Convert(converter = StringMapCryptoConverter.class)
+    private Map<String, String> customProperties;
+
     public Event() {
         super();
+        customProperties = new HashMap<>();
     }
 
     public Event(ENTITY entity) {
@@ -214,6 +227,30 @@ public abstract class Event<ENTITY> {
 
     public void setTenant(String tenant) {
         this.tenant = tenant;
+    }
+
+    public String getReplyToSessionId() {
+        return replyToSessionId;
+    }
+
+    public void setReplyToSessionId(String replyToSessionId) {
+        this.replyToSessionId = replyToSessionId;
+    }
+
+    public String getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(String authorization) {
+        this.authorization = authorization;
+    }
+
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Map<String, String> customProperties) {
+        this.customProperties = customProperties;
     }
 
     @Override
