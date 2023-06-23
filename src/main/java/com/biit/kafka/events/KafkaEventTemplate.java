@@ -31,17 +31,9 @@ public class KafkaEventTemplate<K, V extends Event<?>> extends KafkaTemplate<K, 
         }
     }
 
-    public CompletableFuture<SendResult<K, V>> send(@Nullable String topic, @Nullable K key, @Nullable Integer partition,
-                                                    @Nullable Long timestamp, @Nullable V data) {
+    public CompletableFuture<SendResult<K, V>> send(String topic, K key, Integer partition, Long timestamp, V data) {
         if (topic == null || topic.isBlank()) {
             topic = kafkaConfig.getKafkaTopic();
-        }
-        if (key == null) {
-            return super.send(topic, data);
-        } else if (partition == null) {
-            return super.send(topic, key, data);
-        } else if (timestamp == null) {
-            return super.send(topic, partition, key, data);
         }
         return super.send(topic, partition, timestamp, key, data);
     }
