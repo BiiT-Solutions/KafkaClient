@@ -5,6 +5,7 @@ import com.biit.database.encryption.LocalDateTimeCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.database.encryption.StringMapCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
+import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.kafka.exceptions.InvalidEventException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -89,7 +90,7 @@ public class Event {
     @JsonIgnore
     public void setEntity(Object entity) {
         try {
-            setPayload(new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(entity));
+            setPayload(ObjectMapperFactory.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(entity));
         } catch (JsonProcessingException e) {
             throw new InvalidEventException(this.getClass(), e);
         }

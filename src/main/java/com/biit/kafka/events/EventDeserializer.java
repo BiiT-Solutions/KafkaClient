@@ -52,7 +52,7 @@ public class EventDeserializer implements Deserializer<Event> {
                 KafkaLogger.debug(this.getClass(), "Received event '{}' -> '{}'", byteArrayToHex(bytes),
                         new String(bytes, StandardCharsets.UTF_8));
             }
-            final String data = new String(decrypt(bytes), StandardCharsets.UTF_8);
+            final String data = new String(bytes, StandardCharsets.UTF_8);
             return getObjectMapper().readValue(data, getJsonParser());
         } catch (IllegalArgumentException | JsonProcessingException e) {
             KafkaLogger.debug(this.getClass(), "Not a valid event.");

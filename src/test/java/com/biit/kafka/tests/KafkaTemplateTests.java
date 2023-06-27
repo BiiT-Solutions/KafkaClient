@@ -1,11 +1,9 @@
 package com.biit.kafka.tests;
 
+import com.biit.kafka.consumers.EventListener;
 import com.biit.kafka.events.Event;
 import com.biit.kafka.events.KafkaEventTemplate;
 import com.biit.kafka.events.consumers.TestHistoricalEventConsumer;
-import com.biit.kafka.events.consumers.TestTemplateEventConsumerListeners;
-import com.biit.kafka.events.consumers.TestTemplateEventConsumerListeners2;
-import com.biit.kafka.events.entities.TestEvent;
 import com.biit.kafka.events.entities.TestPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,10 +28,7 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
     private KafkaEventTemplate kafkaTemplate;
 
     @Autowired
-    private TestTemplateEventConsumerListeners testTemplateEventConsumerListeners;
-
-    @Autowired
-    private TestTemplateEventConsumerListeners2 testTemplateEventConsumerListeners2;
+    private EventListener eventListener;
 
     @Autowired
     private TestHistoricalEventConsumer testHistoricalEventConsumer;
@@ -50,13 +45,12 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setListener() {
-        testTemplateEventConsumerListeners.addListener(event -> this.eventPayload = event.getEntity(TestPayload.class));
-        testTemplateEventConsumerListeners.addListener(event -> this.eventPayload = event.getEntity(TestPayload.class));
+        eventListener.addListener(event -> this.eventPayload = event.getEntity(TestPayload.class));
     }
 
     @BeforeClass
     public void setOtherListener() {
-        testTemplateEventConsumerListeners2.addListener(event -> this.eventPayload2 = event.getEntity(TestPayload.class));
+        eventListener.addListener(event -> this.eventPayload2 = event.getEntity(TestPayload.class));
     }
 
     @Test
@@ -81,11 +75,11 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
         AtomicInteger eventsReceived1 = new AtomicInteger();
         AtomicInteger eventsReceived2 = new AtomicInteger();
 
-        testTemplateEventConsumerListeners.addListener(event -> eventsReceived1.getAndIncrement());
-        testTemplateEventConsumerListeners2.addListener(event -> eventsReceived2.getAndIncrement());
+        eventListener.addListener(event -> eventsReceived1.getAndIncrement());
+        eventListener.addListener(event -> eventsReceived2.getAndIncrement());
 
         for (int i = 1; i <= EVENTS_QUANTITY; i++) {
-            kafkaTemplate.send(new TestEvent(generatePayload(i)));
+            kafkaTemplate.send(new Event(generatePayload(i)));
         }
         //Check both listeners read the same event.
         await().atMost(Duration.ofSeconds(20)).untilAsserted(() -> {

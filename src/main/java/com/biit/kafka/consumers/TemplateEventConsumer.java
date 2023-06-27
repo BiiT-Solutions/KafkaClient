@@ -2,33 +2,33 @@ package com.biit.kafka.consumers;
 
 import com.biit.kafka.config.KafkaConfig;
 import com.biit.kafka.events.Event;
+import com.biit.kafka.events.EventDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.stereotype.Component;
 
-public class TemplateEventConsumer<V extends Event> {
+@Component
+public class TemplateEventConsumer {
     private final KafkaConfig kafkaConfig;
-    private final Class<V> type;
 
 
-    public TemplateEventConsumer(Class<V> type, KafkaConfig kafkaConfig) {
+    public TemplateEventConsumer(KafkaConfig kafkaConfig) {
         this.kafkaConfig = kafkaConfig;
-        this.type = type;
     }
 
     @Bean
-    public ConsumerFactory<String, V> typeConsumerFactory() {
+    public ConsumerFactory<String, Event> typeConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(kafkaConfig.getProperties(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(type));
+                new EventDeserializer());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, V> templateEventListenerContainerFactory() {
-        final ConcurrentKafkaListenerContainerFactory<String, V> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, Event> templateEventListenerContainerFactory() {
+        final ConcurrentKafkaListenerContainerFactory<String, Event> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(typeConsumerFactory());
         return factory;
     }
