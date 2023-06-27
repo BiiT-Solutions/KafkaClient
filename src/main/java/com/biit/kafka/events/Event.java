@@ -80,15 +80,20 @@ public class Event {
         customProperties = new HashMap<>();
     }
 
-    public Event(Object entity) {
+    public Event(EventPayload entity) {
+        this(entity, entity.getClass().getName());
+    }
+
+    public Event(EventPayload entity, String entityType) {
         this();
         setEntity(entity);
+        setEntityType(entityType);
         id = Uuid.randomUuid().toString();
         createAt = LocalDateTime.now();
     }
 
     @JsonIgnore
-    public void setEntity(Object entity) {
+    public void setEntity(EventPayload entity) {
         try {
             setPayload(ObjectMapperFactory.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(entity));
         } catch (JsonProcessingException e) {

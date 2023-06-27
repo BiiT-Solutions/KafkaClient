@@ -1,6 +1,8 @@
 package com.biit.kafka.events.entities;
 
-public class TestPayload {
+import com.biit.kafka.events.EventPayload;
+
+public class TestEventPayload2 implements EventPayload {
     private String value;
 
     public String getValue() {
