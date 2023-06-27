@@ -39,16 +39,16 @@ public class KafkaConfig {
     @Value("${spring.kafka.group.id:}")
     private String kafkaGroupId;
 
-    @Value("${spring.kafka.key.serializer:}")
+    @Value("${spring.kafka.producer.key-serializer:}")
     private String kafkaKeySerializer;
 
-    @Value("${spring.kafka.value.serializer:}")
+    @Value("${spring.kafka.producer.value-serializer:}")
     private String kafkaValueSerializer;
 
-    @Value("${spring.kafka.key.deserializer:}")
+    @Value("${spring.kafka.consumer.key-deserializer:}")
     private String kafkaKeyDeserializer;
 
-    @Value("${spring.kafka.value.deserializer:}")
+    @Value("${spring.kafka.consumer.value-deserializer:}")
     private String kafkaValueDeserializer;
 
     private final SecureRandom secureRandom = new SecureRandom();

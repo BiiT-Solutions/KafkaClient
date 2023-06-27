@@ -10,20 +10,20 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class KafkaEventTemplate<K, V extends Event<?>> extends KafkaTemplate<K, V> {
+public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     private final KafkaConfig kafkaConfig;
 
-    public KafkaEventTemplate(KafkaConfig kafkaConfig, ProducerFactory<K, V> producerFactory) {
+    public KafkaEventTemplate(KafkaConfig kafkaConfig, ProducerFactory<String, Event> producerFactory) {
         super(producerFactory);
         this.kafkaConfig = kafkaConfig;
     }
 
-    public CompletableFuture<SendResult<K, V>> send(@Nullable V data) {
+    public CompletableFuture<SendResult<String, Event>> send(@Nullable Event data) {
         return super.send(kafkaConfig.getKafkaTopic(), data);
     }
 
     @Override
-    public CompletableFuture<SendResult<K, V>> send(@Nullable String topic, @Nullable V data) {
+    public CompletableFuture<SendResult<String, Event>> send(@Nullable String topic, @Nullable Event data) {
         if (topic == null) {
             return super.send(kafkaConfig.getKafkaTopic(), data);
         } else {
@@ -31,7 +31,7 @@ public class KafkaEventTemplate<K, V extends Event<?>> extends KafkaTemplate<K, 
         }
     }
 
-    public CompletableFuture<SendResult<K, V>> send(String topic, K key, Integer partition, Long timestamp, V data) {
+    public CompletableFuture<SendResult<String, Event>> send(String topic, String key, Integer partition, Long timestamp, Event data) {
         if (topic == null || topic.isBlank()) {
             topic = kafkaConfig.getKafkaTopic();
         }

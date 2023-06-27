@@ -1,4 +1,4 @@
-package com.biit.kafka.consumers;
+package com.biit.kafka.events;
 
 import com.biit.cipher.CipherInitializer;
 import com.biit.kafka.logger.KafkaLogger;
@@ -21,14 +21,14 @@ import java.time.format.DateTimeFormatter;
 import static com.biit.cipher.EncryptionConfiguration.encryptionKey;
 
 @Component
-public class EventDeserializer<T> implements Deserializer<T> {
+public class EventDeserializer implements Deserializer<Event> {
     public static final String DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss.SSS";
     public static final LocalDateTimeDeserializer LOCAL_DATETIME_SERIALIZER =
             new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATETIME_FORMAT));
 
     private ObjectMapper objectMapper;
 
-    protected TypeReference<T> getJsonParser() {
+    protected TypeReference<Event> getJsonParser() {
         return new TypeReference<>() {
         };
     }
@@ -46,7 +46,7 @@ public class EventDeserializer<T> implements Deserializer<T> {
     }
 
     @Override
-    public T deserialize(String topic, byte[] bytes) {
+    public Event deserialize(String topic, byte[] bytes) {
         try {
             if (KafkaLogger.isDebugEnabled()) {
                 KafkaLogger.debug(this.getClass(), "Received event '{}' -> '{}'", byteArrayToHex(bytes),

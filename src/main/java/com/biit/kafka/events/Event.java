@@ -9,7 +9,6 @@ import com.biit.kafka.exceptions.InvalidEventException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -23,16 +22,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class Event<ENTITY> {
+public class Event {
 
     @Convert(converter = StringCryptoConverter.class)
     private String id;
 
     @Convert(converter = StringCryptoConverter.class)
     private String to;
-
-    @Convert(converter = StringCryptoConverter.class)
-    private String replying;
 
     @Convert(converter = StringCryptoConverter.class)
     private String replyTo;
@@ -69,7 +65,8 @@ public abstract class Event<ENTITY> {
     @Convert(converter = StringCryptoConverter.class)
     private String createdBy;
 
-    private transient ENTITY entity;
+    @Convert(converter = StringCryptoConverter.class)
+    private String entityType;
 
     @Convert(converter = StringCryptoConverter.class)
     private String payload;
@@ -82,35 +79,34 @@ public abstract class Event<ENTITY> {
         customProperties = new HashMap<>();
     }
 
-    public Event(ENTITY entity) {
+    public Event(Object entity) {
         this();
         setEntity(entity);
         id = Uuid.randomUuid().toString();
         createAt = LocalDateTime.now();
     }
 
-    protected abstract TypeReference<ENTITY> getJsonParser();
-
     @JsonIgnore
-    public void setEntity(ENTITY entity) {
+    public void setEntity(Object entity) {
         try {
             setPayload(new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(entity));
-            this.entity = entity;
         } catch (JsonProcessingException e) {
             throw new InvalidEventException(this.getClass(), e);
         }
     }
 
+
     @JsonIgnore
-    public ENTITY getEntity() {
+    public <T> T getEntity(Class<T> entityClass) {
         if (getPayload() != null && !getPayload().isEmpty()) {
             try {
-                entity = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).readValue(getPayload(), getJsonParser());
+                return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                        .readValue(getPayload(), entityClass);
             } catch (JsonProcessingException e) {
                 throw new InvalidEventException(this.getClass(), e);
             }
         }
-        return entity;
+        return null;
     }
 
     public String getPayload() {
@@ -119,7 +115,6 @@ public abstract class Event<ENTITY> {
 
     public void setPayload(String payload) {
         this.payload = payload;
-        this.entity = null;
     }
 
     public String getTo() {
@@ -162,12 +157,12 @@ public abstract class Event<ENTITY> {
         this.subject = subject;
     }
 
-    public String getReplying() {
-        return replying;
+    public String getEntityType() {
+        return entityType;
     }
 
-    public void setReplying(String replying) {
-        this.replying = replying;
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
     }
 
     public UUID getMessageId() {

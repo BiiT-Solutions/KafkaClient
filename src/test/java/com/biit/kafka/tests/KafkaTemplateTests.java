@@ -1,5 +1,6 @@
 package com.biit.kafka.tests;
 
+import com.biit.kafka.events.Event;
 import com.biit.kafka.events.KafkaEventTemplate;
 import com.biit.kafka.events.consumers.TestHistoricalEventConsumer;
 import com.biit.kafka.events.consumers.TestTemplateEventConsumerListeners;
@@ -26,7 +27,7 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
     private static final int EVENTS_QUANTITY = 100;
 
     @Autowired
-    private KafkaEventTemplate<String, TestEvent> kafkaTemplate;
+    private KafkaEventTemplate kafkaTemplate;
 
     @Autowired
     private TestTemplateEventConsumerListeners testTemplateEventConsumerListeners;
@@ -49,17 +50,18 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setListener() {
-        testTemplateEventConsumerListeners.addListener(event -> this.eventPayload = event.getEntity());
+        testTemplateEventConsumerListeners.addListener(event -> this.eventPayload = event.getEntity(TestPayload.class));
+        testTemplateEventConsumerListeners.addListener(event -> this.eventPayload = event.getEntity(TestPayload.class));
     }
 
     @BeforeClass
     public void setOtherListener() {
-        testTemplateEventConsumerListeners2.addListener(event -> this.eventPayload2 = event.getEntity());
+        testTemplateEventConsumerListeners2.addListener(event -> this.eventPayload2 = event.getEntity(TestPayload.class));
     }
 
     @Test
     public void produceEvents() {
-        kafkaTemplate.send(new TestEvent(generatePayload(0)));
+        kafkaTemplate.send(new Event(generatePayload(0)));
 
         //Check both listeners read the same event.
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
