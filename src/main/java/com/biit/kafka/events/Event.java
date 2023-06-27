@@ -59,9 +59,6 @@ public abstract class Event<ENTITY> {
     private String contentType;
 
     @Convert(converter = StringCryptoConverter.class)
-    private String issuer;
-
-    @Convert(converter = StringCryptoConverter.class)
     private String authorization;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -131,14 +128,6 @@ public abstract class Event<ENTITY> {
 
     public void setTo(String to) {
         this.to = to;
-    }
-
-    public String getIssuer() {
-        return issuer;
-    }
-
-    public void setIssuer(String issuer) {
-        this.issuer = issuer;
     }
 
     public String getId() {
