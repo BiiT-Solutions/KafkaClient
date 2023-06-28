@@ -12,9 +12,10 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     private final KafkaConfig kafkaConfig;
+    private static final boolean KAFKA_AUTOFLUSH = true;
 
     public KafkaEventTemplate(KafkaConfig kafkaConfig, ProducerFactory<String, Event> producerFactory) {
-        super(producerFactory);
+        super(producerFactory, KAFKA_AUTOFLUSH);
         this.kafkaConfig = kafkaConfig;
     }
 
