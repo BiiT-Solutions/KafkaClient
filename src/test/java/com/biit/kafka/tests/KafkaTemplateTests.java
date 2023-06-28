@@ -52,7 +52,7 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setListener() {
-        eventListener.addListener(event -> {
+        eventListener.addListener((event, offset, key, partition, topic, timeStamp) -> {
             if (Objects.equals(event.getEntityType(), TestEventPayload.class.getName())) {
                 this.eventPayload = event.getEntity(TestEventPayload.class);
             }
@@ -61,7 +61,7 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setOtherListener() {
-        eventListener.addListener(event -> {
+        eventListener.addListener((event, offset, key, partition, topic, timeStamp) -> {
             if (Objects.equals(event.getEntityType(), TestEventPayload2.class.getName())) {
                 this.eventPayload2 = event.getEntity(TestEventPayload2.class);
             }
@@ -98,8 +98,8 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
         AtomicInteger eventsReceived1 = new AtomicInteger();
         AtomicInteger eventsReceived2 = new AtomicInteger();
 
-        eventListener.addListener(event -> eventsReceived1.getAndIncrement());
-        eventListener.addListener(event -> eventsReceived2.getAndIncrement());
+        eventListener.addListener((event, offset, key, partition, topic, timeStamp) -> eventsReceived1.getAndIncrement());
+        eventListener.addListener((event, offset, key, partition, topic, timeStamp) -> eventsReceived2.getAndIncrement());
 
         for (int i = 1; i <= EVENTS_QUANTITY; i++) {
             kafkaTemplate.send(generatePayload(i));

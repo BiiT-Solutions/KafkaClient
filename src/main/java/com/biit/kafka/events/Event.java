@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Event {
+    private static final int HASH_SEED = 31;
 
     @Convert(converter = StringCryptoConverter.class)
     private String id;
@@ -61,7 +62,7 @@ public class Event {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Convert(converter = LocalDateTimeCryptoConverter.class)
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     @Convert(converter = StringCryptoConverter.class)
     private String createdBy;
@@ -89,7 +90,7 @@ public class Event {
         setEntity(entity);
         setEntityType(entityType);
         id = Uuid.randomUuid().toString();
-        createAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 
     @JsonIgnore
@@ -195,12 +196,12 @@ public class Event {
         this.contentType = contentType;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getCreatedBy() {
@@ -248,5 +249,83 @@ public class Event {
         return "Event{"
                 + "payload='" + payload + '\''
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Event event)) {
+            return false;
+        }
+
+        if (getId() != null ? !getId().equals(event.getId()) : event.getId() != null) {
+            return false;
+        }
+        if (getTo() != null ? !getTo().equals(event.getTo()) : event.getTo() != null) {
+            return false;
+        }
+        if (getReplyTo() != null ? !getReplyTo().equals(event.getReplyTo()) : event.getReplyTo() != null) {
+            return false;
+        }
+        if (getReplyToSessionId() != null ? !getReplyToSessionId().equals(event.getReplyToSessionId()) : event.getReplyToSessionId() != null) {
+            return false;
+        }
+        if (getSessionId() != null ? !getSessionId().equals(event.getSessionId()) : event.getSessionId() != null) {
+            return false;
+        }
+        if (getMessageId() != null ? !getMessageId().equals(event.getMessageId()) : event.getMessageId() != null) {
+            return false;
+        }
+        if (getCorrelationId() != null ? !getCorrelationId().equals(event.getCorrelationId()) : event.getCorrelationId() != null) {
+            return false;
+        }
+        if (getSubject() != null ? !getSubject().equals(event.getSubject()) : event.getSubject() != null) {
+            return false;
+        }
+        if (getTenant() != null ? !getTenant().equals(event.getTenant()) : event.getTenant() != null) {
+            return false;
+        }
+        if (getContentType() != null ? !getContentType().equals(event.getContentType()) : event.getContentType() != null) {
+            return false;
+        }
+        if (getAuthorization() != null ? !getAuthorization().equals(event.getAuthorization()) : event.getAuthorization() != null) {
+            return false;
+        }
+        if (getCreatedAt() != null ? !getCreatedAt().equals(event.getCreatedAt()) : event.getCreatedAt() != null) {
+            return false;
+        }
+        if (getCreatedBy() != null ? !getCreatedBy().equals(event.getCreatedBy()) : event.getCreatedBy() != null) {
+            return false;
+        }
+        if (getEntityType() != null ? !getEntityType().equals(event.getEntityType()) : event.getEntityType() != null) {
+            return false;
+        }
+        if (getPayload() != null ? !getPayload().equals(event.getPayload()) : event.getPayload() != null) {
+            return false;
+        }
+        return getCustomProperties() != null ? getCustomProperties().equals(event.getCustomProperties()) : event.getCustomProperties() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = HASH_SEED * result + (getTo() != null ? getTo().hashCode() : 0);
+        result = HASH_SEED * result + (getReplyTo() != null ? getReplyTo().hashCode() : 0);
+        result = HASH_SEED * result + (getReplyToSessionId() != null ? getReplyToSessionId().hashCode() : 0);
+        result = HASH_SEED * result + (getSessionId() != null ? getSessionId().hashCode() : 0);
+        result = HASH_SEED * result + (getMessageId() != null ? getMessageId().hashCode() : 0);
+        result = HASH_SEED * result + (getCorrelationId() != null ? getCorrelationId().hashCode() : 0);
+        result = HASH_SEED * result + (getSubject() != null ? getSubject().hashCode() : 0);
+        result = HASH_SEED * result + (getTenant() != null ? getTenant().hashCode() : 0);
+        result = HASH_SEED * result + (getContentType() != null ? getContentType().hashCode() : 0);
+        result = HASH_SEED * result + (getAuthorization() != null ? getAuthorization().hashCode() : 0);
+        result = HASH_SEED * result + (getCreatedAt() != null ? getCreatedAt().hashCode() : 0);
+        result = HASH_SEED * result + (getCreatedBy() != null ? getCreatedBy().hashCode() : 0);
+        result = HASH_SEED * result + (getEntityType() != null ? getEntityType().hashCode() : 0);
+        result = HASH_SEED * result + (getPayload() != null ? getPayload().hashCode() : 0);
+        result = HASH_SEED * result + (getCustomProperties() != null ? getCustomProperties().hashCode() : 0);
+        return result;
     }
 }

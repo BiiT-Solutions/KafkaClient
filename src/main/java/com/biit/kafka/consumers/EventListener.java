@@ -18,7 +18,7 @@ public class EventListener {
     private final Set<EventReceivedListener> listeners;
 
     public interface EventReceivedListener {
-        void received(Event event);
+        void received(Event event, Integer offset, String key, int partition, String topic, long timeStamp);
     }
 
     public EventListener() {
@@ -45,6 +45,6 @@ public class EventListener {
         KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
                         + " offset '{}', on partition '{}' received at '{}' with content:\n'{}'.",
                 topic, key, offset, partition, new Date(timeStamp), event.toString());
-        listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event));
+        listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, partition, topic, timeStamp));
     }
 }
