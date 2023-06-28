@@ -1,8 +1,8 @@
 package com.biit.kafka.tests;
 
 import com.biit.kafka.consumers.EventListener;
+import com.biit.kafka.consumers.HistoricalEventConsumer;
 import com.biit.kafka.events.KafkaEventTemplate;
-import com.biit.kafka.events.consumers.TestHistoricalEventConsumer;
 import com.biit.kafka.events.entities.TestEventPayload;
 import com.biit.kafka.events.entities.TestEventPayload2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class KafkaTemplateTests extends AbstractTestNGSpringContextTests {
     private EventListener eventListener;
 
     @Autowired
-    private TestHistoricalEventConsumer testHistoricalEventConsumer;
+    private HistoricalEventConsumer historicalEventConsumer;
 
     private TestEventPayload eventPayload = null;
     private TestEventPayload2 eventPayload2 = null;
