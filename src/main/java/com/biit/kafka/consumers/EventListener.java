@@ -7,6 +7,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ public class EventListener {
     //These annotations are ignored. Here as future reference only. Use them on the child class.
     @KafkaListener(topics = "${spring.kafka.topic}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}",
             containerFactory = "templateEventListenerContainerFactory")
-    public void eventsListener(Event event,
+    public void eventsListener(@Payload(required = false) Event event,
                                final @Header(KafkaHeaders.OFFSET) Integer offset,
                                final @Header(value = KafkaHeaders.KEY, required = false) String key,
                                final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
