@@ -6,11 +6,7 @@ import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.database.encryption.StringMapCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.kafka.config.ObjectMapperFactory;
-import com.biit.kafka.exceptions.InvalidEventException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -71,7 +67,7 @@ public class Event {
     private String entityType;
 
     @Convert(converter = StringCryptoConverter.class)
-    private String payload;
+    private Object payload;
 
     @Convert(converter = StringMapCryptoConverter.class)
     private Map<String, String> customProperties;
@@ -95,32 +91,23 @@ public class Event {
 
     @JsonIgnore
     public void setEntity(EventPayload entity) {
-        try {
-            setPayload(ObjectMapperFactory.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(entity));
-        } catch (JsonProcessingException e) {
-            throw new InvalidEventException(this.getClass(), e);
-        }
+        setPayload(entity);
     }
 
 
     @JsonIgnore
     public <T> T getEntity(Class<T> entityClass) {
-        if (getPayload() != null && !getPayload().isEmpty()) {
-            try {
-                return new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                        .readValue(getPayload(), entityClass);
-            } catch (JsonProcessingException e) {
-                throw new InvalidEventException(this.getClass(), e);
-            }
+        if (getPayload() != null) {
+            return ObjectMapperFactory.getObjectMapper().convertValue(getPayload(), entityClass);
         }
         return null;
     }
 
-    public String getPayload() {
+    public Object getPayload() {
         return payload;
     }
 
-    public void setPayload(String payload) {
+    public void setPayload(Object payload) {
         this.payload = payload;
     }
 
