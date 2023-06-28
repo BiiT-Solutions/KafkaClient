@@ -7,6 +7,7 @@ import com.biit.database.encryption.StringMapCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -233,9 +234,15 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event{"
-                + "payload='" + payload + '\''
-                + '}';
+        try {
+            return "Event{"
+                    + "payload='" + ObjectMapperFactory.getObjectMapper().writeValueAsString(payload) + '\''
+                    + '}';
+        } catch (JsonProcessingException e) {
+            return "Event{"
+                    + "payload='" + payload + '\''
+                    + '}';
+        }
     }
 
     @Override
