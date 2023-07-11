@@ -35,7 +35,7 @@ public class EventListener {
     }
 
     //These annotations are ignored. Here as future reference only. Use them on the child class.
-    @KafkaListener(topics = "${spring.kafka.topic}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}",
+    @KafkaListener(topics = "${spring.kafka.topic:#{null}}", clientIdPrefix = "#{T(java.util.UUID).randomUUID().toString()}",
             containerFactory = "templateEventListenerContainerFactory")
     public void eventsListener(@Payload(required = false) Event event,
                                final @Header(KafkaHeaders.OFFSET) Integer offset,
