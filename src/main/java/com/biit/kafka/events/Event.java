@@ -236,7 +236,7 @@ public class Event {
     public String toString() {
         try {
             return "Event{"
-                    + "payload='" + ObjectMapperFactory.getObjectMapper().writeValueAsString(payload) + '\''
+                    + "payload='" + ObjectMapperFactory.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(payload) + '\''
                     + '}';
         } catch (JsonProcessingException e) {
             return "Event{"
