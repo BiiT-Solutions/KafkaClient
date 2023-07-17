@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestEventManagerServer {
 
+    private static final int PARTITIONS = 10;
+    private static final int REPLICAS = 1;
+
     public static void main(String[] args) {
         SpringApplication.run(TestEventManagerServer.class, args);
     }
