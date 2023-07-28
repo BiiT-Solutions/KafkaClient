@@ -235,8 +235,22 @@ public class Event {
         customProperties.put(key, value);
     }
 
+    public void setCustomProperty(EventCustomProperties key, String value) {
+        if (key == null) {
+            return;
+        }
+        setCustomProperty(key.getTag(), value);
+    }
+
     public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public String getCustomProperty(EventCustomProperties property) {
+        if (customProperties == null) {
+            return null;
+        }
+        return customProperties.get(property.getTag());
     }
 
     @Override
