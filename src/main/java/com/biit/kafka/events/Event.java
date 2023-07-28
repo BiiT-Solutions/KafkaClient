@@ -228,6 +228,13 @@ public class Event {
         return customProperties;
     }
 
+    public void setCustomProperty(String key, String value) {
+        if (customProperties == null) {
+            customProperties = new HashMap<>();
+        }
+        customProperties.put(key, value);
+    }
+
     public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
     }
