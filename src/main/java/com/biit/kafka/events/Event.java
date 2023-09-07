@@ -32,9 +32,6 @@ public class Event {
     @Convert(converter = StringCryptoConverter.class)
     private String replyTo;
 
-    @Convert(converter = StringCryptoConverter.class)
-    private String replyToSessionId;
-
     @Convert(converter = UUIDCryptoConverter.class)
     private UUID sessionId;
 
@@ -46,6 +43,10 @@ public class Event {
 
     @Convert(converter = StringCryptoConverter.class)
     private String subject;
+
+    //String that identifies the content as a form name, customer email, etc.
+    @Convert(converter = StringCryptoConverter.class)
+    private String tag;
 
     @Convert(converter = StringCryptoConverter.class)
     private String tenant;
@@ -144,6 +145,14 @@ public class Event {
         this.sessionId = sessionId;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public String getSubject() {
         return subject;
     }
@@ -206,14 +215,6 @@ public class Event {
 
     public void setTenant(String tenant) {
         this.tenant = tenant;
-    }
-
-    public String getReplyToSessionId() {
-        return replyToSessionId;
-    }
-
-    public void setReplyToSessionId(String replyToSessionId) {
-        this.replyToSessionId = replyToSessionId;
     }
 
     public String getAuthorization() {
@@ -284,7 +285,7 @@ public class Event {
         if (getReplyTo() != null ? !getReplyTo().equals(event.getReplyTo()) : event.getReplyTo() != null) {
             return false;
         }
-        if (getReplyToSessionId() != null ? !getReplyToSessionId().equals(event.getReplyToSessionId()) : event.getReplyToSessionId() != null) {
+        if (getTag() != null ? !getTag().equals(event.getTag()) : event.getTag() != null) {
             return false;
         }
         if (getSessionId() != null ? !getSessionId().equals(event.getSessionId()) : event.getSessionId() != null) {
@@ -328,7 +329,7 @@ public class Event {
         int result = getId() != null ? getId().hashCode() : 0;
         result = HASH_SEED * result + (getTo() != null ? getTo().hashCode() : 0);
         result = HASH_SEED * result + (getReplyTo() != null ? getReplyTo().hashCode() : 0);
-        result = HASH_SEED * result + (getReplyToSessionId() != null ? getReplyToSessionId().hashCode() : 0);
+        result = HASH_SEED * result + (getTag() != null ? getTag().hashCode() : 0);
         result = HASH_SEED * result + (getSessionId() != null ? getSessionId().hashCode() : 0);
         result = HASH_SEED * result + (getMessageId() != null ? getMessageId().hashCode() : 0);
         result = HASH_SEED * result + (getCorrelationId() != null ? getCorrelationId().hashCode() : 0);
