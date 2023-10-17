@@ -3,7 +3,9 @@
     <test name="D3-clientTests" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="kafkaTemplateEvents"/>
+                <!-- Kafka server is down on testing -->
+                <exclude name="kafkaTemplateEvents"/>
+                <!-- Disabled as not used -->
                 <exclude name="ksqlClient"/>
             </run>
         </groups>

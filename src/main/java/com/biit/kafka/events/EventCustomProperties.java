@@ -6,6 +6,9 @@ public enum EventCustomProperties {
 
     FACT_TYPE("factType"),
 
+    //Label from the source.
+    SOURCE_TAG("sourceTag"),
+
     ORGANIZATION("organization");
 
     private final String tag;
