@@ -1,21 +1,18 @@
 package com.biit.kafka.events;
 
 import com.biit.cipher.CipherInitializer;
+import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.apache.kafka.common.serialization.Deserializer;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static com.biit.cipher.EncryptionConfiguration.encryptionKey;
@@ -33,18 +30,6 @@ public class EventDeserializer implements Deserializer<Event> {
         };
     }
 
-    private ObjectMapper getObjectMapper() {
-        if (objectMapper == null) {
-            final JavaTimeModule module = new JavaTimeModule();
-            module.addDeserializer(LocalDateTime.class, LOCAL_DATETIME_SERIALIZER);
-            objectMapper = Jackson2ObjectMapperBuilder.json()
-                    .modules(module)
-                    .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                    .build();
-        }
-        return objectMapper;
-    }
-
     @Override
     public Event deserialize(String topic, byte[] bytes) {
         try {
@@ -53,7 +38,7 @@ public class EventDeserializer implements Deserializer<Event> {
                         new String(bytes, StandardCharsets.UTF_8));
             }
             final String data = new String(bytes, StandardCharsets.UTF_8);
-            return getObjectMapper().readValue(data, getJsonParser());
+            return ObjectMapperFactory.getObjectMapper().readValue(data, getJsonParser());
         } catch (IllegalArgumentException | JsonProcessingException e) {
             KafkaLogger.debug(this.getClass(), "Not a valid event.");
         }
