@@ -1,5 +1,6 @@
 package com.biit.kafka;
 
+import com.biit.kafka.config.KafkaConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +21,13 @@ public class KafkaConfiguration {
      */
     @Bean
     public NewTopic createTestTopic(@Value("${spring.kafka.topic:}") String testTopic) {
-        if (testTopic != null) {
-            return TopicBuilder.name(testTopic)
-                    .partitions(PARTITIONS)
-                    .replicas(REPLICAS)
-                    .build();
+        if (testTopic == null) {
+            testTopic = KafkaConfig.DEFAULT_TOPIC;
         }
-        return null;
+        return TopicBuilder.name(testTopic)
+                .partitions(PARTITIONS)
+                .replicas(REPLICAS)
+                .build();
     }
 
 }

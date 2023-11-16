@@ -16,6 +16,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Generates the configuration used later by the consumer / producers.
@@ -23,6 +24,8 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
     private static final String MAX_FETCH_SIZE = "20971520"; //20MB
+
+    public static final String DEFAULT_TOPIC = "DefaultTopic";
     private static final int PARTITIONS = 10;
     private static final int REPLICAS = 1;
 
@@ -149,13 +152,10 @@ public class KafkaConfig {
      */
     @Bean
     public NewTopic createTopic() {
-        if (kafkaTopic != null) {
-            return TopicBuilder.name(kafkaTopic)
-                    .partitions(PARTITIONS)
-                    .replicas(REPLICAS)
-                    .build();
-        }
-        return null;
+        return TopicBuilder.name(Objects.requireNonNullElse(kafkaTopic, DEFAULT_TOPIC))
+                .partitions(PARTITIONS)
+                .replicas(REPLICAS)
+                .build();
     }
 
 }
