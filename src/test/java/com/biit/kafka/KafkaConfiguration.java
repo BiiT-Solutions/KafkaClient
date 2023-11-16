@@ -20,10 +20,13 @@ public class KafkaConfiguration {
      */
     @Bean
     public NewTopic createTestTopic(@Value("${spring.kafka.topic:}") String testTopic) {
-        return TopicBuilder.name(testTopic)
-                .partitions(PARTITIONS)
-                .replicas(REPLICAS)
-                .build();
+        if (testTopic != null) {
+            return TopicBuilder.name(testTopic)
+                    .partitions(PARTITIONS)
+                    .replicas(REPLICAS)
+                    .build();
+        }
+        return null;
     }
 
 }

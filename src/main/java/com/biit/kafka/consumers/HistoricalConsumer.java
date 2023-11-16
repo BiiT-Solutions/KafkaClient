@@ -146,7 +146,10 @@ public abstract class HistoricalConsumer<T> {
      * @return a collection of events.
      */
     public Collection<T> getEvents(LocalDateTime startingTime, Duration duration) {
-        return getEvents(Collections.singletonList(kafkaConfig.getKafkaTopic()), startingTime, duration);
+        if (kafkaConfig.getKafkaTopic() != null) {
+            return getEvents(Collections.singletonList(kafkaConfig.getKafkaTopic()), startingTime, duration);
+        }
+        return new ArrayList<>();
     }
 
     /**

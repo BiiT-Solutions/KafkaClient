@@ -149,10 +149,13 @@ public class KafkaConfig {
      */
     @Bean
     public NewTopic createTopic() {
-        return TopicBuilder.name(kafkaTopic)
-                .partitions(PARTITIONS)
-                .replicas(REPLICAS)
-                .build();
+        if (kafkaTopic != null) {
+            return TopicBuilder.name(kafkaTopic)
+                    .partitions(PARTITIONS)
+                    .replicas(REPLICAS)
+                    .build();
+        }
+        return null;
     }
 
 }

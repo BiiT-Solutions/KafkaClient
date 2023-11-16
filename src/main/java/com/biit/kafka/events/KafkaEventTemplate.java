@@ -20,11 +20,17 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     }
 
     public CompletableFuture<SendResult<String, Event>> send(EventPayload data) {
-        return super.send(kafkaConfig.getKafkaTopic(), new Event(data));
+        if (kafkaConfig.getKafkaTopic() != null) {
+            return super.send(kafkaConfig.getKafkaTopic(), new Event(data));
+        }
+        return CompletableFuture.completedFuture(null);
     }
 
     public CompletableFuture<SendResult<String, Event>> send(@Nullable Event data) {
-        return super.send(kafkaConfig.getKafkaTopic(), data);
+        if (kafkaConfig.getKafkaTopic() != null) {
+            return super.send(kafkaConfig.getKafkaTopic(), data);
+        }
+        return CompletableFuture.completedFuture(null);
     }
 
     public CompletableFuture<SendResult<String, Event>> send(@Nullable String topic, EventPayload data) {
@@ -34,7 +40,10 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     @Override
     public CompletableFuture<SendResult<String, Event>> send(@Nullable String topic, @Nullable Event data) {
         if (topic == null) {
-            return super.send(kafkaConfig.getKafkaTopic(), data);
+            if (kafkaConfig.getKafkaTopic() != null) {
+                return super.send(kafkaConfig.getKafkaTopic(), data);
+            }
+            return CompletableFuture.completedFuture(null);
         } else {
             return super.send(topic, data);
         }
@@ -47,7 +56,11 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
 
     public CompletableFuture<SendResult<String, Event>> send(String topic, String key, Integer partition, Long timestamp, Event data) {
         if (topic == null || topic.isBlank()) {
-            topic = kafkaConfig.getKafkaTopic();
+            if (kafkaConfig.getKafkaTopic() != null) {
+                topic = kafkaConfig.getKafkaTopic();
+            } else {
+                return CompletableFuture.completedFuture(null);
+            }
         }
         return super.send(topic, partition, timestamp, key, data);
     }
