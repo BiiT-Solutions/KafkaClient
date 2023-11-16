@@ -26,6 +26,15 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
         this.eventSender = eventSender;
     }
 
+    @Override
+    @Transactional
+    public DTO update(DTO dto, String updaterName) {
+        final DTO storedDTO = super.update(dto, updaterName);
+        eventSender.sendEvents(storedDTO, EventSubject.UPDATED, updaterName);
+        return storedDTO;
+    }
+
+    @Override
     @Transactional
     public DTO create(DTO dto, String creatorName) {
         final DTO storedDTO = super.create(dto, creatorName);
@@ -33,6 +42,7 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
         return storedDTO;
     }
 
+    @Override
     @Transactional
     public List<DTO> create(Collection<DTO> dtos, String creatorName) {
         final List<DTO> storedDTOs = super.create(dtos, creatorName);
@@ -40,8 +50,17 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
         return storedDTOs;
     }
 
+    @Override
     @Transactional
     public void delete(DTO entity, String deletedBy) {
+        super.delete(entity, deletedBy);
+        eventSender.sendEvents(entity, EventSubject.DELETED, deletedBy);
+    }
 
+    @Override
+    public void deleteById(KEY id, String deletedBy) {
+        final ENTITY entity = getProvider().get(id).orElse(null);
+        super.deleteById(id, deletedBy);
+        eventSender.sendEvents(convert(entity), EventSubject.DELETED, deletedBy);
     }
 }
