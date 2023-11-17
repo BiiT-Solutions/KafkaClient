@@ -10,6 +10,7 @@ import com.biit.server.persistence.entities.CreatedElement;
 import com.biit.server.persistence.repositories.CreatedElementRepository;
 import com.biit.server.providers.CreatedElementProvider;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +25,7 @@ public abstract class KafkaCreatedElementController<
 
     private final IEventSender<DTO> eventSender;
 
-    protected KafkaCreatedElementController(PROVIDER provider, CONVERTER converter, IEventSender<DTO> eventSender) {
+    protected KafkaCreatedElementController(PROVIDER provider, CONVERTER converter, @Autowired(required = false) IEventSender<DTO> eventSender) {
         super(provider, converter);
         this.eventSender = eventSender;
     }
@@ -37,7 +38,9 @@ public abstract class KafkaCreatedElementController<
     @Transactional
     public DTO update(DTO dto, String updaterName) {
         final DTO storedDTO = super.update(dto, updaterName);
-        eventSender.sendEvents(storedDTO, EventSubject.UPDATED, updaterName);
+        if (eventSender != null) {
+            eventSender.sendEvents(storedDTO, EventSubject.UPDATED, updaterName);
+        }
         return storedDTO;
     }
 
@@ -45,7 +48,9 @@ public abstract class KafkaCreatedElementController<
     @Transactional
     public DTO create(DTO dto, String creatorName) {
         final DTO storedDTO = super.create(dto, creatorName);
-        eventSender.sendEvents(storedDTO, EventSubject.CREATED, creatorName);
+        if (eventSender != null) {
+            eventSender.sendEvents(storedDTO, EventSubject.CREATED, creatorName);
+        }
         return storedDTO;
     }
 
@@ -53,7 +58,9 @@ public abstract class KafkaCreatedElementController<
     @Transactional
     public List<DTO> create(Collection<DTO> dtos, String creatorName) {
         final List<DTO> storedDTOs = super.create(dtos, creatorName);
-        storedDTOs.forEach(DTO -> eventSender.sendEvents(DTO, EventSubject.CREATED, creatorName));
+        if (eventSender != null) {
+            storedDTOs.forEach(DTO -> eventSender.sendEvents(DTO, EventSubject.CREATED, creatorName));
+        }
         return storedDTOs;
     }
 
@@ -61,13 +68,17 @@ public abstract class KafkaCreatedElementController<
     @Transactional
     public void delete(DTO entity, String deletedBy) {
         super.delete(entity, deletedBy);
-        eventSender.sendEvents(entity, EventSubject.DELETED, deletedBy);
+        if (eventSender != null) {
+            eventSender.sendEvents(entity, EventSubject.DELETED, deletedBy);
+        }
     }
 
     @Override
     public void deleteById(KEY id, String deletedBy) {
         final ENTITY entity = getProvider().get(id).orElse(null);
         super.deleteById(id, deletedBy);
-        eventSender.sendEvents(convert(entity), EventSubject.DELETED, deletedBy);
+        if (eventSender != null) {
+            eventSender.sendEvents(convert(entity), EventSubject.DELETED, deletedBy);
+        }
     }
 }

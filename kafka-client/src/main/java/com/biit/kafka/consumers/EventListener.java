@@ -2,6 +2,7 @@ package com.biit.kafka.consumers;
 
 import com.biit.kafka.events.Event;
 import com.biit.kafka.logger.KafkaLogger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${spring.kafka.topic:}')")
 @EnableKafka
 @Configuration
 public class EventListener {
