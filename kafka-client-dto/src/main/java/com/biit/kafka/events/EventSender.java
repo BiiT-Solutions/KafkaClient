@@ -18,10 +18,12 @@ public class EventSender<DTO> implements IEventSender<DTO> {
     private final KafkaEventTemplate kafkaTemplate;
 
     private final String factType;
+    private final String tag;
 
-    public EventSender(KafkaEventTemplate kafkaTemplate, String factType) {
+    public EventSender(KafkaEventTemplate kafkaTemplate, String tag, String factType) {
         this.kafkaTemplate = kafkaTemplate;
         this.factType = factType;
+        this.tag = tag;
     }
 
 
@@ -47,7 +49,7 @@ public class EventSender<DTO> implements IEventSender<DTO> {
         event.setContentType(MediaType.APPLICATION_JSON_VALUE);
         event.setCreatedAt(LocalDateTime.now());
         event.setReplyTo(applicationName);
-        event.setTag("Recurrence");
+        event.setTag(tag);
         event.setCustomProperty(EventCustomProperties.FACT_TYPE, factType);
         return event;
     }
