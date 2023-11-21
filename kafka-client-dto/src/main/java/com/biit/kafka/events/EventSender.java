@@ -1,6 +1,7 @@
 package com.biit.kafka.events;
 
 import com.biit.kafka.logger.EventsLogger;
+import com.biit.server.controllers.models.ElementDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 
@@ -41,7 +42,11 @@ public class EventSender<DTO> implements IEventSender<DTO> {
 
     private Event getEvent(DTO dto, EventSubject subject, String createdBy) {
         final Event event = new Event(new ElementPayload<>(dto));
-        event.setCreatedBy(createdBy);
+        if (createdBy != null) {
+            event.setCreatedBy(createdBy);
+        } else if (dto instanceof ElementDTO<?>) {
+            event.setCreatedBy(((ElementDTO<?>) dto).getCreatedBy());
+        }
         event.setMessageId(UUID.randomUUID());
         if (subject != null) {
             event.setSubject(subject.toString());
