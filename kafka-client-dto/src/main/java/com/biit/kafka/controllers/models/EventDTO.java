@@ -1,4 +1,4 @@
-package com.biit.kafka.controller.models;
+package com.biit.kafka.controllers.models;
 
 import com.biit.server.controllers.models.CreatedElementDTO;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

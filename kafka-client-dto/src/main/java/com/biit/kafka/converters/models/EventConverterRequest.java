@@ -1,4 +1,4 @@
-package com.biit.kafka.controller.models;
+package com.biit.kafka.converters.models;
 
 import com.biit.kafka.events.Event;
 import com.biit.server.converters.models.ConverterRequest;
