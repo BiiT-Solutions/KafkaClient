@@ -17,7 +17,7 @@ public class TemplateEventProducer {
 
     @Bean
     public ProducerFactory<String, Event> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(kafkaConfig.getProperties());
+        return new DefaultKafkaProducerFactory<>(kafkaConfig.getProducerProperties());
     }
 
     @Bean

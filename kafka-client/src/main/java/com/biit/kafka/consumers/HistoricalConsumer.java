@@ -80,7 +80,7 @@ public abstract class HistoricalConsumer<T> {
             throw new UnsupportedOperationException("Kafka consumer thread already running");
         }
 
-        final Map<String, Object> properties = new HashMap<>(kafkaConfig.getProperties());
+        final Map<String, Object> properties = new HashMap<>(kafkaConfig.getConsumerProperties());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         try (org.apache.kafka.clients.consumer.Consumer<?, String> kafkaConsumer = new KafkaConsumer<>(properties)) {
@@ -162,7 +162,7 @@ public abstract class HistoricalConsumer<T> {
      */
     public Collection<T> getEvents(Collection<String> topics, LocalDateTime startingTime, Duration duration) {
         final List<T> result = new ArrayList<>();
-        final Map<String, Object> properties = new HashMap<>(kafkaConfig.getProperties());
+        final Map<String, Object> properties = new HashMap<>(kafkaConfig.getConsumerProperties());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         final org.apache.kafka.clients.consumer.Consumer<?, String> kafkaConsumer = new KafkaConsumer<>(properties);

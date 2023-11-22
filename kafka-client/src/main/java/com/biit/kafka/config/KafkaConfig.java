@@ -54,9 +54,18 @@ public class KafkaConfig {
     @Value("${spring.kafka.consumer.value-deserializer:}")
     private String kafkaValueDeserializer;
 
+    @Value("${spring.kafka.number.retries:}")
+    private String kafkaNumberOfRetries;
+
+    @Value("${spring.kafka.delivery.timeout:}")
+    private String kafkaDeliveryTimeout;
+
+    @Value("${spring.kafka.request.timeout:}")
+    private String kafkaRequestTimeout;
+
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public Map<String, Object> getProperties() {
+    public Map<String, Object> getConsumerProperties() {
         final Map<String, Object> props = new HashMap<>();
         if (kafkaBootstrapServers != null && !kafkaBootstrapServers.isEmpty()) {
             KafkaLogger.debug(this.getClass().getName(), "Connecting to Kafka server '" + kafkaBootstrapServers + "'");
@@ -80,6 +89,18 @@ public class KafkaConfig {
         } else {
             props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         }
+        if (kafkaRequestTimeout != null && !kafkaRequestTimeout.isEmpty()) {
+            props.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 1);
+        }
+        props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MAX_FETCH_SIZE);
+        props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, MAX_FETCH_SIZE);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
+        return props;
+    }
+
+    public Map<String, Object> getProducerProperties() {
+        final Map<String, Object> props = new HashMap<>();
         if (kafkaKeySerializer != null && !kafkaKeySerializer.isEmpty()) {
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, kafkaKeySerializer);
         } else {
@@ -90,9 +111,12 @@ public class KafkaConfig {
         } else {
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         }
-        props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MAX_FETCH_SIZE);
-        props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, MAX_FETCH_SIZE);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        if (kafkaNumberOfRetries != null && !kafkaNumberOfRetries.isEmpty()) {
+            props.put(ProducerConfig.RETRIES_CONFIG, kafkaNumberOfRetries);
+        }
+        if (kafkaRequestTimeout != null && !kafkaRequestTimeout.isEmpty()) {
+            props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaDeliveryTimeout);
+        }
         props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
         return props;
     }

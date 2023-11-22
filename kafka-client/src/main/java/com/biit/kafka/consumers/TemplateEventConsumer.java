@@ -19,9 +19,8 @@ public class TemplateEventConsumer {
         this.kafkaConfig = kafkaConfig;
     }
 
-    @Bean
     public ConsumerFactory<String, Event> typeConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(kafkaConfig.getProperties(),
+        return new DefaultKafkaConsumerFactory<>(kafkaConfig.getConsumerProperties(),
                 new StringDeserializer(),
                 new EventDeserializer());
     }
