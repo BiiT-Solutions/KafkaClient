@@ -1,6 +1,7 @@
 package com.biit.kafka.events;
 
 import com.biit.kafka.config.KafkaConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.SendResult;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 
 @Component
+@ConditionalOnExpression("${spring.kafka.enabled} == true")
 public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     private final KafkaConfig kafkaConfig;
     private static final boolean KAFKA_AUTOFLUSH = true;

@@ -2,6 +2,7 @@ package com.biit.kafka.events;
 
 import com.biit.kafka.logger.EventsLogger;
 import com.biit.server.controllers.models.ElementDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 
@@ -24,7 +25,7 @@ public class EventSender<DTO> implements IEventSender<DTO> {
     private final String factType;
     private final String tag;
 
-    public EventSender(KafkaEventTemplate kafkaTemplate, String tag, String factType) {
+    public EventSender(@Autowired(required = false) KafkaEventTemplate kafkaTemplate, String tag, String factType) {
         this.kafkaTemplate = kafkaTemplate;
         this.factType = factType;
         this.tag = tag;
@@ -40,7 +41,7 @@ public class EventSender<DTO> implements IEventSender<DTO> {
     }
 
     public void sendEvents(DTO dto, EventSubject subject, String tag, String executedBy) {
-        if (kafkaEnabled) {
+        if (kafkaEnabled && kafkaTemplate != null) {
             EventsLogger.debug(this.getClass().getName(), "Preparing for sending events...");
             if (sendTopic != null && !sendTopic.isEmpty()) {
                 //Send the complete form as an event.
