@@ -88,6 +88,17 @@ public abstract class KafkaCreatedElementController<
         }
     }
 
+    @Override
+    public void deleteAll(String deletedBy) {
+        final Collection<ENTITY> entities = getProvider().getAll();
+        super.deleteAll(deletedBy);
+        if (eventSender != null) {
+            entities.forEach(entity -> {
+                eventSender.sendEvents(convert(entity), EventSubject.DELETED, deletedBy);
+            });
+        }
+    }
+
 
     public void validate(EventDTO eventDTO) throws ValidateBadRequestException {
         if (eventDTO.getMessageId() == null) {
