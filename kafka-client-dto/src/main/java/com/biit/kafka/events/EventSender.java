@@ -16,19 +16,18 @@ public class EventSender<DTO> implements IEventSender<DTO> {
     @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
-    private final boolean kafkaEnabled;
+    @Value("#{new Boolean('${spring.kafka.enabled:false}')}")
+    private boolean kafkaEnabled;
 
     private final KafkaEventTemplate kafkaTemplate;
 
     private final String factType;
     private final String tag;
 
-    public EventSender(KafkaEventTemplate kafkaTemplate, String tag, String factType, @Value("${spring.kafka.enabled:false}") String kafkaEnabled) {
+    public EventSender(KafkaEventTemplate kafkaTemplate, String tag, String factType) {
         this.kafkaTemplate = kafkaTemplate;
         this.factType = factType;
         this.tag = tag;
-
-        this.kafkaEnabled = Boolean.parseBoolean(kafkaEnabled);
     }
 
     public boolean isKafkaEnabled() {
