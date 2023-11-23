@@ -36,11 +36,15 @@ public class EventSender<DTO> implements IEventSender<DTO> {
 
     @Override
     public void sendEvents(DTO dto, EventSubject subject, String executedBy) {
+        sendEvents(dto, subject, tag, executedBy);
+    }
+
+    public void sendEvents(DTO dto, EventSubject subject, String tag, String executedBy) {
         if (kafkaEnabled) {
             EventsLogger.debug(this.getClass().getName(), "Preparing for sending events...");
             if (sendTopic != null && !sendTopic.isEmpty()) {
                 //Send the complete form as an event.
-                kafkaTemplate.send(sendTopic, getEvent(dto, subject, executedBy));
+                kafkaTemplate.send(sendTopic, getEvent(dto, subject, tag, executedBy));
                 EventsLogger.debug(this.getClass().getName(), "Event '{}' with dto '{}' send by '{}'!", subject, dto, executedBy);
             } else {
                 EventsLogger.warning(this.getClass().getName(), "Send topic not defined!");
@@ -48,7 +52,7 @@ public class EventSender<DTO> implements IEventSender<DTO> {
         }
     }
 
-    private Event getEvent(DTO dto, EventSubject subject, String createdBy) {
+    private Event getEvent(DTO dto, EventSubject subject, String tag, String createdBy) {
         final Event event = new Event(new ElementPayload<>(dto));
         if (createdBy != null) {
             event.setCreatedBy(createdBy);
