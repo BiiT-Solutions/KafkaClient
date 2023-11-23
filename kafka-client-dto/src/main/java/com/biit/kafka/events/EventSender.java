@@ -16,27 +16,36 @@ public class EventSender<DTO> implements IEventSender<DTO> {
     @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
+    private final boolean kafkaEnabled;
+
     private final KafkaEventTemplate kafkaTemplate;
 
     private final String factType;
     private final String tag;
 
-    public EventSender(KafkaEventTemplate kafkaTemplate, String tag, String factType) {
+    public EventSender(KafkaEventTemplate kafkaTemplate, String tag, String factType, @Value("${spring.kafka.enabled:false}") String kafkaEnabled) {
         this.kafkaTemplate = kafkaTemplate;
         this.factType = factType;
         this.tag = tag;
+
+        this.kafkaEnabled = Boolean.parseBoolean(kafkaEnabled);
     }
 
+    public boolean isKafkaEnabled() {
+        return kafkaEnabled;
+    }
 
     @Override
     public void sendEvents(DTO dto, EventSubject subject, String executedBy) {
-        EventsLogger.debug(this.getClass().getName(), "Preparing for sending events...");
-        if (sendTopic != null && !sendTopic.isEmpty()) {
-            //Send the complete form as an event.
-            kafkaTemplate.send(sendTopic, getEvent(dto, subject, executedBy));
-            EventsLogger.debug(this.getClass().getName(), "Event '{}' with dto '{}' send by '{}'!", subject, dto, executedBy);
-        } else {
-            EventsLogger.warning(this.getClass().getName(), "Send topic not defined!");
+        if (kafkaEnabled) {
+            EventsLogger.debug(this.getClass().getName(), "Preparing for sending events...");
+            if (sendTopic != null && !sendTopic.isEmpty()) {
+                //Send the complete form as an event.
+                kafkaTemplate.send(sendTopic, getEvent(dto, subject, executedBy));
+                EventsLogger.debug(this.getClass().getName(), "Event '{}' with dto '{}' send by '{}'!", subject, dto, executedBy);
+            } else {
+                EventsLogger.warning(this.getClass().getName(), "Send topic not defined!");
+            }
         }
     }
 
