@@ -1,6 +1,7 @@
 package com.biit.kafka.events;
 
 import com.biit.kafka.config.KafkaConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -11,25 +12,25 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-@ConditionalOnExpression("${spring.kafka.enabled} == true")
+@ConditionalOnExpression("${spring.kafka.enabled:false}")
 public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     private final KafkaConfig kafkaConfig;
-    private static final boolean KAFKA_AUTOFLUSH = true;
+    private static final boolean KAFKA_AUTO_FLUSH = true;
 
-    public KafkaEventTemplate(KafkaConfig kafkaConfig, ProducerFactory<String, Event> producerFactory) {
-        super(producerFactory, KAFKA_AUTOFLUSH);
+    public KafkaEventTemplate(@Autowired(required = false) KafkaConfig kafkaConfig, ProducerFactory<String, Event> producerFactory) {
+        super(producerFactory, KAFKA_AUTO_FLUSH);
         this.kafkaConfig = kafkaConfig;
     }
 
     public CompletableFuture<SendResult<String, Event>> send(EventPayload data) {
-        if (kafkaConfig.getKafkaTopic() != null) {
+        if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
             return super.send(kafkaConfig.getKafkaTopic(), new Event(data));
         }
         return CompletableFuture.completedFuture(null);
     }
 
     public CompletableFuture<SendResult<String, Event>> send(@Nullable Event data) {
-        if (kafkaConfig.getKafkaTopic() != null) {
+        if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
             return super.send(kafkaConfig.getKafkaTopic(), data);
         }
         return CompletableFuture.completedFuture(null);
@@ -42,7 +43,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     @Override
     public CompletableFuture<SendResult<String, Event>> send(@Nullable String topic, @Nullable Event data) {
         if (topic == null) {
-            if (kafkaConfig.getKafkaTopic() != null) {
+            if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
                 return super.send(kafkaConfig.getKafkaTopic(), data);
             }
             return CompletableFuture.completedFuture(null);
@@ -58,7 +59,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
 
     public CompletableFuture<SendResult<String, Event>> send(String topic, String key, Integer partition, Long timestamp, Event data) {
         if (topic == null || topic.isBlank()) {
-            if (kafkaConfig.getKafkaTopic() != null) {
+            if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
                 topic = kafkaConfig.getKafkaTopic();
             } else {
                 return CompletableFuture.completedFuture(null);

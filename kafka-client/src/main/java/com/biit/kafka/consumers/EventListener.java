@@ -14,7 +14,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@ConditionalOnExpression("!T(org.springframework.util.StringUtils).isEmpty('${spring.kafka.topic:}')")
+@ConditionalOnExpression("${spring.kafka.enabled:false}")
+//@ConditionalOnProperty(prefix = "spring", name = "kafka.enabled", havingValue = "true", matchIfMissing = false)
 @EnableKafka
 @Configuration
 public class EventListener {

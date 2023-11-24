@@ -6,6 +6,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
@@ -22,6 +23,7 @@ import java.util.Objects;
  * Generates the configuration used later by the consumer / producers.
  */
 @Configuration
+@ConditionalOnExpression("${spring.kafka.enabled:false}")
 public class KafkaConfig {
     private static final String MAX_FETCH_SIZE = "20971520"; //20MB
 
