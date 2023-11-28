@@ -43,8 +43,7 @@ public class KafkaConfig {
     @Value("${spring.kafka.client.id:}")
     private String kafkaClientId;
 
-    //@Value("#{spring.kafka.group.id?:T(java.util.UUID).randomUUID().toString()}")
-    @Value("#{${spring.kafka.group.id}?:T(java.util.UUID).randomUUID().toString()}")
+    @Value("#{'${spring.kafka.group.id}'?:T(java.util.UUID).randomUUID().toString()}")
     private String kafkaGroupId;
 
     @Value("${spring.kafka.producer.key-serializer:}")
