@@ -14,10 +14,12 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import javax.annotation.PostConstruct;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Generates the configuration used later by the consumer / producers.
@@ -41,7 +43,8 @@ public class KafkaConfig {
     @Value("${spring.kafka.client.id:}")
     private String kafkaClientId;
 
-    @Value("${spring.kafka.group.id:}")
+    //@Value("#{spring.kafka.group.id?:T(java.util.UUID).randomUUID().toString()}")
+    @Value("#{${spring.kafka.group.id}?:T(java.util.UUID).randomUUID().toString()}")
     private String kafkaGroupId;
 
     @Value("${spring.kafka.producer.key-serializer:}")
@@ -67,6 +70,15 @@ public class KafkaConfig {
 
     private final SecureRandom secureRandom = new SecureRandom();
 
+    public KafkaConfig() {
+
+    }
+
+    @PostConstruct
+    public void created() {
+        KafkaLogger.debug(this.getClass(), "KafkaConfig started with:\n{}", this);
+    }
+
     public Map<String, Object> getConsumerProperties() {
         final Map<String, Object> props = new HashMap<>();
         if (kafkaBootstrapServers != null && !kafkaBootstrapServers.isEmpty()) {
@@ -79,7 +91,9 @@ public class KafkaConfig {
             props.put(ConsumerConfig.CLIENT_ID_CONFIG, "ID" + Math.abs(secureRandom.nextInt(Integer.MAX_VALUE)));
         }
         if (kafkaGroupId != null && !kafkaGroupId.isEmpty()) {
-            props.put(ConsumerConfig.GROUP_ID_CONFIG, "ID" + kafkaGroupId);
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, "GR" + kafkaGroupId);
+        } else {
+            props.put(ConsumerConfig.GROUP_ID_CONFIG, "GR" + UUID.randomUUID());
         }
         if (kafkaKeyDeserializer != null && !kafkaKeyDeserializer.isEmpty()) {
             props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, kafkaKeyDeserializer);
@@ -184,4 +198,20 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Override
+    public String toString() {
+        return "KafkaConfig{"
+                + "kafkaTopic='" + kafkaTopic + '\''
+                + ", kafkaBootstrapServers='" + kafkaBootstrapServers + '\''
+                + ", kafkaClientId='" + kafkaClientId + '\''
+                + ", kafkaGroupId='" + kafkaGroupId + '\''
+                + ", kafkaKeySerializer='" + kafkaKeySerializer + '\''
+                + ", kafkaValueSerializer='" + kafkaValueSerializer + '\''
+                + ", kafkaKeyDeserializer='" + kafkaKeyDeserializer + '\''
+                + ", kafkaValueDeserializer='" + kafkaValueDeserializer + '\''
+                + ", kafkaNumberOfRetries='" + kafkaNumberOfRetries + '\''
+                + ", kafkaDeliveryTimeout='" + kafkaDeliveryTimeout + '\''
+                + ", kafkaRequestTimeout='" + kafkaRequestTimeout + '\''
+                + '}';
+    }
 }

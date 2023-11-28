@@ -1,6 +1,7 @@
 package com.biit.kafka.events;
 
 import com.biit.kafka.config.KafkaConfig;
+import com.biit.kafka.logger.KafkaLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,6 +21,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     public KafkaEventTemplate(@Autowired(required = false) KafkaConfig kafkaConfig, ProducerFactory<String, Event> producerFactory) {
         super(producerFactory, KAFKA_AUTO_FLUSH);
         this.kafkaConfig = kafkaConfig;
+        KafkaLogger.info(this.getClass(), "KafkaEventTemplate started....");
     }
 
     public CompletableFuture<SendResult<String, Event>> send(EventPayload data) {
