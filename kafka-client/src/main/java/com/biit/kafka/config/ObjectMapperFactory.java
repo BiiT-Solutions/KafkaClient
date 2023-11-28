@@ -1,5 +1,6 @@
 package com.biit.kafka.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -26,7 +27,9 @@ public final class ObjectMapperFactory {
             objectMapper =  JsonMapper.builder()
                     .addModule(module)
                     .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false).build();
+                    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    .build();
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         }
         return objectMapper;
     }
