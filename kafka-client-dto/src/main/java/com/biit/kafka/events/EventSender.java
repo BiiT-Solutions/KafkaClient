@@ -54,7 +54,7 @@ public class EventSender<DTO> implements IEventSender<DTO> {
     }
 
     private Event getEvent(DTO dto, EventSubject subject, String tag, String createdBy) {
-        final Event event = new Event(new ElementPayload<>(dto));
+        final Event event = new Event(dto);
         if (createdBy != null) {
             event.setCreatedBy(createdBy);
         } else if (dto instanceof ElementDTO<?>) {

@@ -6,6 +6,7 @@ import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.database.encryption.StringMapCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.kafka.config.ObjectMapperFactory;
+import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -69,7 +70,7 @@ public class Event {
     private String entityType;
 
     @Convert(converter = StringCryptoConverter.class)
-    private Object payload;
+    private String payload;
 
     @Convert(converter = StringMapCryptoConverter.class)
     private Map<String, String> customProperties;
@@ -79,11 +80,11 @@ public class Event {
         customProperties = new HashMap<>();
     }
 
-    public Event(EventPayload entity) {
+    public Event(Object entity) {
         this(entity, entity.getClass().getName());
     }
 
-    public Event(EventPayload entity, String entityType) {
+    public Event(Object entity, String entityType) {
         this();
         setEntity(entity);
         setEntityType(entityType);
@@ -92,8 +93,13 @@ public class Event {
     }
 
     @JsonIgnore
-    public void setEntity(EventPayload entity) {
-        setPayload(entity);
+    public void setEntity(Object entity) {
+        try {
+            setPayload(ObjectMapperFactory.getObjectMapper().writeValueAsString(entity));
+        } catch (JsonProcessingException e) {
+            KafkaLogger.errorMessage(this.getClass(), e);
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -105,11 +111,11 @@ public class Event {
         return null;
     }
 
-    public Object getPayload() {
+    public String getPayload() {
         return payload;
     }
 
-    public void setPayload(Object payload) {
+    public void setPayload(String payload) {
         this.payload = payload;
     }
 

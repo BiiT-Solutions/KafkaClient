@@ -24,7 +24,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
         KafkaLogger.info(this.getClass(), "KafkaEventTemplate started....");
     }
 
-    public CompletableFuture<SendResult<String, Event>> send(EventPayload data) {
+    public CompletableFuture<SendResult<String, Event>> send(Object data) {
         if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
             return super.send(kafkaConfig.getKafkaTopic(), new Event(data));
         }
@@ -36,10 +36,6 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
             return super.send(kafkaConfig.getKafkaTopic(), data);
         }
         return CompletableFuture.completedFuture(null);
-    }
-
-    public CompletableFuture<SendResult<String, Event>> send(@Nullable String topic, EventPayload data) {
-        return send(topic, new Event(data));
     }
 
     @Override
@@ -54,7 +50,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
         }
     }
 
-    public CompletableFuture<SendResult<String, Event>> send(String topic, String key, Integer partition, Long timestamp, EventPayload data) {
+    public CompletableFuture<SendResult<String, Event>> send(String topic, String key, Integer partition, Long timestamp, Object data) {
         return send(topic, key, partition, timestamp, new Event(data));
     }
 
