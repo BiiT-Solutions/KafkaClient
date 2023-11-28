@@ -262,15 +262,9 @@ public class Event {
 
     @Override
     public String toString() {
-        try {
-            return "Event{"
-                    + "payload='" + ObjectMapperFactory.getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(payload) + '\''
-                    + '}';
-        } catch (JsonProcessingException e) {
-            return "Event{"
-                    + "payload='" + payload + '\''
-                    + '}';
-        }
+        return "Event{"
+                + "payload='" + payload + '\''
+                + '}';
     }
 
     @Override
