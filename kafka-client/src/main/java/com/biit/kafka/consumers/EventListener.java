@@ -22,7 +22,7 @@ public class EventListener {
     private final Set<EventReceivedListener> listeners;
 
     public interface EventReceivedListener {
-        void received(Event event, Integer offset, String key, int partition, String topic, long timeStamp);
+        void received(Event event, Integer offset, String groupId, String key, int partition, String topic, long timeStamp);
     }
 
     public EventListener() {
@@ -42,13 +42,14 @@ public class EventListener {
             containerFactory = "templateEventListenerContainerFactory", autoStartup = "${spring.kafka.enabled:false}")
     public void eventsListener(@Payload(required = false) Event event,
                                final @Header(KafkaHeaders.OFFSET) Integer offset,
+                               final @Header(KafkaHeaders.GROUP_ID) String groupId,
                                final @Header(value = KafkaHeaders.KEY, required = false) String key,
                                final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                                final @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
         KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
-                        + " offset '{}', on partition '{}' received at '{}' with content:\n'{}'.",
-                topic, key, offset, partition, new Date(timeStamp), event.toString());
-        listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, partition, topic, timeStamp));
+                        + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
+                topic, key, offset, groupId, partition, new Date(timeStamp), event.toString());
+        listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, groupId, partition, topic, timeStamp));
     }
 }
