@@ -106,7 +106,12 @@ public class Event {
     @JsonIgnore
     public <T> T getEntity(Class<T> entityClass) {
         if (getPayload() != null) {
-            return ObjectMapperFactory.getObjectMapper().convertValue(getPayload(), entityClass);
+            try {
+                return ObjectMapperFactory.getObjectMapper().readValue(getPayload(), entityClass);
+            } catch (JsonProcessingException e) {
+                KafkaLogger.errorMessage(this.getClass(), e);
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }

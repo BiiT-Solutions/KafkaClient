@@ -30,6 +30,7 @@ public final class ObjectMapperFactory {
                     .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
                     .build();
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
         return objectMapper;
     }
