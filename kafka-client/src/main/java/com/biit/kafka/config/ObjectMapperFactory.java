@@ -1,6 +1,7 @@
 package com.biit.kafka.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -24,10 +25,11 @@ public final class ObjectMapperFactory {
             final JavaTimeModule module = new JavaTimeModule();
             final LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
             module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
-            objectMapper =  JsonMapper.builder()
+            objectMapper = JsonMapper.builder()
                     .addModule(module)
                     .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
                     .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .build();
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

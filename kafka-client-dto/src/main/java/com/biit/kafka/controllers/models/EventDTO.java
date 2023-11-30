@@ -36,7 +36,7 @@ public class EventDTO extends CreatedElementDTO {
 
     private String entityType;
 
-    private String payload;
+    private Object payload;
 
     private Map<String, String> customProperties;
 
@@ -146,11 +146,11 @@ public class EventDTO extends CreatedElementDTO {
         super.setCreatedAt(createAt);
     }
 
-    public String getPayload() {
+    public Object getPayload() {
         return payload;
     }
 
-    public void setPayload(String payload) {
+    public void setPayload(Object payload) {
         this.payload = payload;
     }
 

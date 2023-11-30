@@ -1,9 +1,12 @@
 package com.biit.kafka.converters;
 
-import com.biit.kafka.converters.models.EventConverterRequest;
+import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.kafka.controllers.models.EventDTO;
+import com.biit.kafka.converters.models.EventConverterRequest;
 import com.biit.kafka.events.Event;
 import com.biit.server.controller.converters.ElementConverter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +21,12 @@ public class EventConverter extends ElementConverter<Event, EventDTO, EventConve
         eventDTO.setMessageId(from.getEntity().getMessageId());
         eventDTO.setSessionId(from.getEntity().getSessionId());
         eventDTO.setCorrelationId(from.getEntity().getCorrelationId());
-        eventDTO.setPayload(from.getEntity().getPayload());
+        try {
+            eventDTO.setPayload(ObjectMapperFactory.getObjectMapper().readValue(from.getEntity().getPayload(), new TypeReference<>() {
+            }));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return eventDTO;
     }
 
@@ -32,7 +40,11 @@ public class EventConverter extends ElementConverter<Event, EventDTO, EventConve
         event.setMessageId(to.getMessageId());
         event.setSessionId(to.getSessionId());
         event.setCorrelationId(to.getCorrelationId());
-        event.setPayload(to.getPayload());
+        try {
+            event.setPayload(ObjectMapperFactory.getObjectMapper().writeValueAsString(to.getPayload()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return event;
     }
 }
