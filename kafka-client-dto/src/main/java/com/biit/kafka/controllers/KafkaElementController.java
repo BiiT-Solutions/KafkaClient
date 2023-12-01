@@ -31,6 +31,10 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
         this.eventSender = eventSender;
     }
 
+    public IEventSender<DTO> getEventSender() {
+        return eventSender;
+    }
+
     @Override
     @Transactional
     public DTO update(DTO dto, String updaterName) {
