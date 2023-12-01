@@ -33,6 +33,7 @@ public final class ObjectMapperFactory {
                     .build();
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         }
         return objectMapper;
     }
