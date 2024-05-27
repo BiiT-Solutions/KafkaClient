@@ -3,6 +3,7 @@ package com.biit.kafka.controllers;
 import com.biit.kafka.controllers.models.EventDTO;
 import com.biit.kafka.events.EventSubject;
 import com.biit.kafka.events.IEventSender;
+import com.biit.kafka.logger.KafkaLogger;
 import com.biit.server.controller.CreatedElementController;
 import com.biit.server.controller.converters.ElementConverter;
 import com.biit.server.controllers.models.CreatedElementDTO;
@@ -94,7 +95,12 @@ public abstract class KafkaCreatedElementController<
         super.deleteAll(deletedBy);
         if (eventSender != null) {
             entities.forEach(entity -> {
-                eventSender.sendEvents(convert(entity), EventSubject.DELETED, deletedBy);
+                try {
+                    eventSender.sendEvents(convert(entity), EventSubject.DELETED, deletedBy);
+                } catch (Exception e) {
+                    KafkaLogger.severe(this.getClass(), "Event failure: 'DELETE' on entity " + entity);
+                    KafkaLogger.errorMessage(this.getClass(), e);
+                }
             });
         }
     }
