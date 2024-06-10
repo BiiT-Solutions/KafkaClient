@@ -39,7 +39,7 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
     @Transactional
     public DTO update(DTO dto, String updaterName) {
         final DTO storedDTO = super.update(dto, updaterName);
-        if (eventSender != null) {
+        if (eventSender != null && storedDTO != null) {
             eventSender.sendEvents(storedDTO, EventSubject.UPDATED, updaterName);
         }
         return storedDTO;
@@ -50,7 +50,7 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
     public DTO create(DTO dto, String creatorName) {
         validate(dto);
         final DTO storedDTO = super.create(dto, creatorName);
-        if (eventSender != null) {
+        if (eventSender != null && storedDTO != null) {
             eventSender.sendEvents(storedDTO, EventSubject.CREATED, creatorName);
         }
         return storedDTO;
@@ -80,7 +80,7 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
     public void deleteById(KEY id, String deletedBy) {
         final ENTITY entity = getProvider().get(id).orElse(null);
         super.deleteById(id, deletedBy);
-        if (eventSender != null) {
+        if (eventSender != null && entity != null) {
             eventSender.sendEvents(convert(entity), EventSubject.DELETED, deletedBy);
         }
     }
