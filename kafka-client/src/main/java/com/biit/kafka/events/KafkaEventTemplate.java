@@ -26,6 +26,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
 
     public CompletableFuture<SendResult<String, Event>> send(Object data) {
         if (data == null) {
+            KafkaLogger.warning(this.getClass(), "Receiving null data.");
             return CompletableFuture.completedFuture(null);
         }
         if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
@@ -47,6 +48,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
     @Override
     public CompletableFuture<SendResult<String, Event>> send(@Nullable String topic, @Nullable Event data) {
         if (data == null) {
+            KafkaLogger.warning(this.getClass(), "Receiving null data.");
             return CompletableFuture.completedFuture(null);
         }
         if (topic == null) {
@@ -61,6 +63,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
 
     public CompletableFuture<SendResult<String, Event>> send(String topic, String key, Integer partition, Long timestamp, Object data) {
         if (data == null) {
+            KafkaLogger.warning(this.getClass(), "Receiving null data.");
             return CompletableFuture.completedFuture(null);
         }
         return send(topic, key, partition, timestamp, new Event(data));
@@ -69,6 +72,7 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
 
     public CompletableFuture<SendResult<String, Event>> send(String topic, String key, Integer partition, Long timestamp, Event data) {
         if (data == null) {
+            KafkaLogger.warning(this.getClass(), "Receiving null data.");
             return CompletableFuture.completedFuture(null);
         }
         if (topic == null || topic.isBlank()) {

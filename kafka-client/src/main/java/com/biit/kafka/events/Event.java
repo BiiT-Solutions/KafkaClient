@@ -1,18 +1,14 @@
 package com.biit.kafka.events;
 
 
-import com.biit.database.encryption.LocalDateTimeCryptoConverter;
 import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.database.encryption.StringMapCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.kafka.logger.KafkaLogger;
+import com.biit.server.persistence.entities.CreatedElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.Convert;
 import org.apache.kafka.common.Uuid;
 
@@ -21,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Event {
+public class Event extends CreatedElement {
     private static final int HASH_SEED = 31;
 
     @Convert(converter = StringCryptoConverter.class)
@@ -58,14 +54,6 @@ public class Event {
     @Convert(converter = StringCryptoConverter.class)
     private String authorization;
 
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
-    private LocalDateTime createdAt;
-
-    @Convert(converter = StringCryptoConverter.class)
-    private String createdBy;
-
     @Convert(converter = StringCryptoConverter.class)
     private String entityType;
 
@@ -89,7 +77,7 @@ public class Event {
         setEntity(entity);
         setEntityType(entityType);
         id = Uuid.randomUuid().toString();
-        createdAt = LocalDateTime.now();
+        setCreatedAt(LocalDateTime.now());
     }
 
     @JsonIgnore
@@ -202,22 +190,6 @@ public class Event {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
     }
 
     public String getTenant() {
