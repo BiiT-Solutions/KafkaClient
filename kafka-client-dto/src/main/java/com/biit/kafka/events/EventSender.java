@@ -54,6 +54,9 @@ public class EventSender<DTO> implements IEventSender<DTO> {
     }
 
     private Event getEvent(DTO dto, EventSubject subject, String tag, String createdBy) {
+        if (dto == null) {
+            return null;
+        }
         final Event event = new Event(dto);
         if (createdBy != null) {
             event.setCreatedBy(createdBy);

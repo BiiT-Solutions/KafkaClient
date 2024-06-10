@@ -16,6 +16,9 @@ public class EventConverter extends ElementConverter<Event, EventDTO, EventConve
 
     @Override
     protected EventDTO convertElement(EventConverterRequest from) {
+        if (from.getEntity() == null) {
+            return null;
+        }
         final EventDTO eventDTO = new EventDTO();
         BeanUtils.copyProperties(from.getEntity(), eventDTO);
         eventDTO.setMessageId(from.getEntity().getMessageId());
