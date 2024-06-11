@@ -4,14 +4,14 @@ import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.kafka.controllers.models.EventDTO;
 import com.biit.kafka.converters.models.EventConverterRequest;
 import com.biit.kafka.events.Event;
-import com.biit.server.controller.converters.ElementConverter;
+import com.biit.server.controller.converters.SimpleConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EventConverter extends ElementConverter<Event, EventDTO, EventConverterRequest> {
+public class EventConverter extends SimpleConverter<Event, EventDTO, EventConverterRequest> {
 
 
     @Override
