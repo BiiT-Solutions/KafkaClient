@@ -51,7 +51,7 @@ public class EventListener {
                                final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
         KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
                         + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
-                topic, key, offset, groupId, partition, new Date(timeStamp), event.toString());
+                topic, key, offset, groupId, partition, new Date(timeStamp), event != null ? event.toString() : null);
         listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, groupId, partition, topic, timeStamp));
     }
 }
