@@ -49,9 +49,15 @@ public class EventListener {
                                final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                                final @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
-        KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
-                        + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
-                topic, key, offset, groupId, partition, new Date(timeStamp), event != null ? event.toString() : null);
-        listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, groupId, partition, topic, timeStamp));
+        if (event != null) {
+            KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
+                            + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
+                    topic, key, offset, groupId, partition, new Date(timeStamp), event.toString());
+            listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, groupId, partition, topic, timeStamp));
+        } else {
+            KafkaLogger.warning(this.getClass(), "Null event received with topic '{}', key '{}',"
+                            + " offset '{}', group '{}', on partition '{}' received at '{}'",
+                    topic, key, offset, groupId, partition, new Date(timeStamp));
+        }
     }
 }
