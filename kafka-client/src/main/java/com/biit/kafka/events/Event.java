@@ -72,6 +72,9 @@ public class Event {
     @Convert(converter = StringCryptoConverter.class)
     private String payload;
 
+    @Convert(converter = StringCryptoConverter.class)
+    private String organization;
+
     @Convert(converter = StringMapCryptoConverter.class)
     private Map<String, String> customProperties;
 
@@ -265,6 +268,14 @@ public class Event {
         return customProperties.get(property.getTag());
     }
 
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
     @Override
     public String toString() {
         return "Event{"
@@ -326,6 +337,9 @@ public class Event {
         if (getPayload() != null ? !getPayload().equals(event.getPayload()) : event.getPayload() != null) {
             return false;
         }
+        if (getOrganization() != null ? !getOrganization().equals(event.getOrganization()) : event.getOrganization() != null) {
+            return false;
+        }
         return getCustomProperties() != null ? getCustomProperties().equals(event.getCustomProperties()) : event.getCustomProperties() == null;
     }
 
@@ -346,6 +360,7 @@ public class Event {
         result = HASH_SEED * result + (getCreatedBy() != null ? getCreatedBy().hashCode() : 0);
         result = HASH_SEED * result + (getEntityType() != null ? getEntityType().hashCode() : 0);
         result = HASH_SEED * result + (getPayload() != null ? getPayload().hashCode() : 0);
+        result = HASH_SEED * result + (getOrganization() != null ? getOrganization().hashCode() : 0);
         result = HASH_SEED * result + (getCustomProperties() != null ? getCustomProperties().hashCode() : 0);
         return result;
     }

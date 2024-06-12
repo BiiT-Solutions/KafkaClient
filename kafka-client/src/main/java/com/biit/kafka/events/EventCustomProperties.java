@@ -9,6 +9,8 @@ public enum EventCustomProperties {
     //Label from the source.
     SOURCE_TAG("sourceTag"),
 
+    //Deprecated, use organization event property.
+    @Deprecated
     ORGANIZATION("organization");
 
     private final String tag;
