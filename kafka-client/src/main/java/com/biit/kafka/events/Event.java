@@ -98,7 +98,9 @@ public class Event {
     @JsonIgnore
     public void setEntity(Object entity) {
         try {
-            setPayload(ObjectMapperFactory.getObjectMapper().writeValueAsString(entity));
+            if (entity != null) {
+                setPayload(ObjectMapperFactory.getObjectMapper().writeValueAsString(entity));
+            }
         } catch (JsonProcessingException e) {
             KafkaLogger.errorMessage(this.getClass(), e);
             throw new RuntimeException(e);
