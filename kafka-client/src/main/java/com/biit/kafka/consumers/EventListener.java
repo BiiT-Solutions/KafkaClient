@@ -2,6 +2,7 @@ package com.biit.kafka.consumers;
 
 import com.biit.kafka.events.Event;
 import com.biit.kafka.logger.KafkaLogger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -12,6 +13,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @ConditionalOnExpression("${spring.kafka.enabled:false}")
@@ -20,6 +22,9 @@ import java.util.Set;
 @Configuration
 public class EventListener {
     private final Set<EventReceivedListener> listeners;
+
+    @Value("${spring.kafka.send.topic:}")
+    private String kafkaSendTopic;
 
     public interface EventReceivedListener {
         void received(Event event, Integer offset, String groupId, String key, int partition, String topic, long timeStamp);
@@ -49,14 +54,20 @@ public class EventListener {
                                final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                                final @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
-        if (event != null) {
-            KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
-                            + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
-                    topic, key, offset, groupId, partition, new Date(timeStamp), event.toString());
-            listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, groupId, partition, topic, timeStamp));
+        if (!Objects.equals(topic, kafkaSendTopic)) {
+            if (event != null) {
+                KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
+                                + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
+                        topic, key, offset, groupId, partition, new Date(timeStamp), event.toString());
+                listeners.forEach(eventReceivedListener -> eventReceivedListener.received(event, offset, key, groupId, partition, topic, timeStamp));
+            } else {
+                KafkaLogger.warning(this.getClass(), "Null event received with topic '{}', key '{}',"
+                                + " offset '{}', group '{}', on partition '{}' received at '{}'",
+                        topic, key, offset, groupId, partition, new Date(timeStamp));
+            }
         } else {
-            KafkaLogger.warning(this.getClass(), "Null event received with topic '{}', key '{}',"
-                            + " offset '{}', group '{}', on partition '{}' received at '{}'",
+            KafkaLogger.debug(this.getClass(), "Ignoring event send on topic '{}', key '{}',"
+                            + " offset '{}', group '{}', on partition '{}' received at '{}' as is an event from this application.",
                     topic, key, offset, groupId, partition, new Date(timeStamp));
         }
     }

@@ -5,7 +5,6 @@ import com.biit.kafka.config.ObjectMapperFactory;
 import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.springframework.stereotype.Component;
@@ -22,8 +21,6 @@ public class EventDeserializer implements Deserializer<Event> {
     public static final String DATETIME_FORMAT = "dd-MM-yyyy HH:mm:ss.SSS";
     public static final LocalDateTimeDeserializer LOCAL_DATETIME_SERIALIZER =
             new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATETIME_FORMAT));
-
-    private ObjectMapper objectMapper;
 
     protected TypeReference<Event> getJsonParser() {
         return new TypeReference<>() {
