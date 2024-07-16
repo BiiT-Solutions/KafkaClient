@@ -11,7 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EventConverter extends SimpleConverter<Event, EventDTO, EventConverterRequest> {
+public class EventDataConverter extends SimpleConverter<Event, EventDTO, EventConverterRequest> {
 
 
     @Override
