@@ -26,12 +26,22 @@ public class EventListener {
     @Value("${spring.kafka.send.topic:}")
     private String kafkaSendTopic;
 
+    private final boolean ignoreOwnEvents;
+
     public interface EventReceivedListener {
         void received(Event event, Integer offset, String groupId, String key, int partition, String topic, long timeStamp);
     }
 
     public EventListener() {
+        super();
         this.listeners = new HashSet<>();
+        ignoreOwnEvents = true;
+    }
+
+    public EventListener(boolean ignoreOwnEvents) {
+        super();
+        this.listeners = new HashSet<>();
+        this.ignoreOwnEvents = ignoreOwnEvents;
     }
 
     public void addListener(EventReceivedListener listener) {
@@ -54,7 +64,7 @@ public class EventListener {
                                final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                                final @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
-        if (!Objects.equals(topic, kafkaSendTopic)) {
+        if (!ignoreOwnEvents || !Objects.equals(topic, kafkaSendTopic)) {
             if (event != null) {
                 KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
                                 + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
