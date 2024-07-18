@@ -143,7 +143,7 @@ public class KafkaConfig {
             props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, kafkaMessageMaxBytes);
         }
         if (kafkaCompressionType != null && !kafkaCompressionType.isEmpty()) {
-            //If sending json payloads, snappy compression is recommended.
+            //If sending json payloads, snappy compression is recommended. But on alpine is needed 'apk add --no-cache gcompat'
             props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, kafkaCompressionType);
             //https://developer.ibm.com/articles/benefits-compression-kafka-messaging/
             props.put(ProducerConfig.LINGER_MS_CONFIG, LINGER_MS_CONFIG);
