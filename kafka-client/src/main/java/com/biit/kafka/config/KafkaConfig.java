@@ -67,6 +67,12 @@ public class KafkaConfig {
     @Value("${spring.kafka.request.timeout:}")
     private String kafkaRequestTimeout;
 
+    @Value("${spring.kafka.max.request.size:}")
+    private String kafkaMessageMaxBytes;
+
+    @Value("${spring.kafka.producer.compression-type:}")
+    private String kafkaCompressionType;
+
     private final SecureRandom secureRandom = new SecureRandom();
 
     public KafkaConfig() {
@@ -131,6 +137,12 @@ public class KafkaConfig {
         }
         if (kafkaRequestTimeout != null && !kafkaRequestTimeout.isEmpty()) {
             props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaDeliveryTimeout);
+        }
+        if (kafkaMessageMaxBytes != null && !kafkaMessageMaxBytes.isEmpty()) {
+            props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, kafkaMessageMaxBytes);
+        }
+        if (kafkaCompressionType != null && !kafkaCompressionType.isEmpty()) {
+            props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, kafkaCompressionType);
         }
         props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
         return props;
