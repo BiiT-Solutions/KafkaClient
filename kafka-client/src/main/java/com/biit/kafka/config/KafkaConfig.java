@@ -32,6 +32,7 @@ public class KafkaConfig {
     public static final String DEFAULT_TOPIC = "DefaultTopic";
     private static final int PARTITIONS = 10;
     private static final int REPLICAS = 1;
+    private static final int LINGER_MS_CONFIG = 5;
 
 
     @Value("${spring.kafka.topic:}")
@@ -145,7 +146,7 @@ public class KafkaConfig {
             //If sending json payloads, snappy compression is recommended.
             props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, kafkaCompressionType);
             //https://developer.ibm.com/articles/benefits-compression-kafka-messaging/
-            props.put(ProducerConfig.LINGER_MS_CONFIG, 5);
+            props.put(ProducerConfig.LINGER_MS_CONFIG, LINGER_MS_CONFIG);
             //props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         }
         props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
