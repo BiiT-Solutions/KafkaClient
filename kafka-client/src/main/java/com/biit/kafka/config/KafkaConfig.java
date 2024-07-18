@@ -142,7 +142,11 @@ public class KafkaConfig {
             props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, kafkaMessageMaxBytes);
         }
         if (kafkaCompressionType != null && !kafkaCompressionType.isEmpty()) {
+            //If sending json payloads, snappy compression is recommended.
             props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, kafkaCompressionType);
+            //https://developer.ibm.com/articles/benefits-compression-kafka-messaging/
+            props.put(ProducerConfig.LINGER_MS_CONFIG, 5);
+            //props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
         }
         props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
         return props;
