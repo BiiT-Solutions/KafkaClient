@@ -24,7 +24,9 @@ public enum EventSubject {
 
     ERROR,
 
-    SUCCESS;
+    SUCCESS,
+
+    REPORT;
 
     public static EventSubject from(String tag) {
         for (EventSubject eventSubject : EventSubject.values()) {
