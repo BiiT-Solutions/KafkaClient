@@ -23,8 +23,8 @@ import java.util.Set;
 public class EventListener {
     private final Set<EventReceivedListener> listeners;
 
-    @Value("${spring.kafka.send.topic:}")
-    private String kafkaSendTopic;
+    @Value("${spring.application.name:#{null}}")
+    private String applicationName;
 
     private final boolean ignoreOwnEvents;
 
@@ -64,7 +64,7 @@ public class EventListener {
                                final @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                                final @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                final @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timeStamp) {
-        if (!ignoreOwnEvents || !Objects.equals(topic, kafkaSendTopic)) {
+        if (!ignoreOwnEvents || !Objects.equals(event.getReplyTo(), applicationName)) {
             if (event != null) {
                 KafkaLogger.debug(this.getClass().getName(), "Event received with topic '{}', key '{}',"
                                 + " offset '{}', group '{}', on partition '{}' received at '{}' with content:\n'{}'.",
@@ -76,9 +76,9 @@ public class EventListener {
                         topic, key, offset, groupId, partition, new Date(timeStamp));
             }
         } else {
-            KafkaLogger.debug(this.getClass(), "Ignoring event send on topic '{}', key '{}',"
+            KafkaLogger.debug(this.getClass(), "Ignoring event from '{}' on topic '{}', key '{}',"
                             + " offset '{}', group '{}', on partition '{}' received at '{}' as is an event from this application.",
-                    topic, key, offset, groupId, partition, new Date(timeStamp));
+                    event.getReplyTo(), topic, key, offset, groupId, partition, new Date(timeStamp));
         }
     }
 }
