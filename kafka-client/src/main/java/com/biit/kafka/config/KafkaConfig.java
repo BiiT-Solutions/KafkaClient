@@ -144,6 +144,7 @@ public class KafkaConfig {
             props.put("buffer.memory", kafkaMessageMaxBytes);
             props.put("message.max.bytes", kafkaMessageMaxBytes);
             props.put("max.message.bytes", kafkaMessageMaxBytes);
+            props.put("fetch.message.max.bytes", kafkaMessageMaxBytes);
         }
         if (kafkaCompressionType != null && !kafkaCompressionType.isEmpty()) {
             //If sending json payloads, snappy compression is recommended. But on alpine is needed 'apk add --no-cache gcompat'
