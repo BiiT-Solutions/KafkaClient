@@ -114,8 +114,8 @@ public class KafkaConfig {
         if (kafkaRequestTimeout != null && !kafkaRequestTimeout.isEmpty()) {
             props.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 1);
         }
-        props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MAX_FETCH_SIZE);
-        props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, MAX_FETCH_SIZE);
+        props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, kafkaMessageMaxBytes != null ? kafkaMessageMaxBytes : MAX_FETCH_SIZE);
+        props.put(ConsumerConfig.FETCH_MAX_BYTES_CONFIG, kafkaMessageMaxBytes != null ? kafkaMessageMaxBytes : MAX_FETCH_SIZE);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.VALUE_FUNCTION, FailedEventDeserializer.class);
         return props;
@@ -139,13 +139,12 @@ public class KafkaConfig {
         if (kafkaRequestTimeout != null && !kafkaRequestTimeout.isEmpty()) {
             props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaDeliveryTimeout);
         }
-        if (kafkaMessageMaxBytes != null && !kafkaMessageMaxBytes.isEmpty()) {
-            props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, kafkaMessageMaxBytes);
-            props.put("buffer.memory", kafkaMessageMaxBytes);
-            props.put("message.max.bytes", kafkaMessageMaxBytes);
-            props.put("max.message.bytes", kafkaMessageMaxBytes);
-            props.put("fetch.message.max.bytes", kafkaMessageMaxBytes);
-        }
+
+        props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, kafkaMessageMaxBytes != null ? kafkaMessageMaxBytes : MAX_FETCH_SIZE);
+        props.put("buffer.memory", kafkaMessageMaxBytes != null ? kafkaMessageMaxBytes : MAX_FETCH_SIZE);
+        props.put("message.max.bytes", kafkaMessageMaxBytes != null ? kafkaMessageMaxBytes : MAX_FETCH_SIZE);
+        props.put("max.message.bytes", kafkaMessageMaxBytes != null ? kafkaMessageMaxBytes : MAX_FETCH_SIZE);
+
         if (kafkaCompressionType != null && !kafkaCompressionType.isEmpty()) {
             //If sending json payloads, snappy compression is recommended. But on alpine is needed 'apk add --no-cache gcompat'
             props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, kafkaCompressionType);
