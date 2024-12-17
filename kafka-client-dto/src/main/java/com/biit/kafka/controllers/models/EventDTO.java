@@ -40,6 +40,8 @@ public class EventDTO extends CreatedElementDTO {
 
     private String organization;
 
+    private String unit;
+
     private Map<String, String> customProperties;
 
     public String getId() {
@@ -144,6 +146,14 @@ public class EventDTO extends CreatedElementDTO {
 
     public void setOrganization(String organization) {
         this.organization = organization;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
