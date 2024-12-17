@@ -68,10 +68,10 @@ public class KafkaConfig {
     @Value("${spring.kafka.request.timeout:}")
     private String kafkaRequestTimeout;
 
-    @Value("${spring.kafka.max.request.size:}")
+    @Value("${spring.kafka.max.request.size:5242880}")
     private String kafkaMessageMaxBytes;
 
-    @Value("${spring.kafka.producer.compression-type:}")
+    @Value("${spring.kafka.producer.compression-type:snappy}")
     private String kafkaCompressionType;
 
     private final SecureRandom secureRandom = new SecureRandom();
