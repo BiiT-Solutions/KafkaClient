@@ -31,6 +31,11 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
         }
         if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
             KafkaLogger.info(this.getClass(), "Sending data '{}' on topic '{}'.", data, kafkaConfig.getKafkaTopic());
+            if (!KafkaLogger.isDebugEnabled()) {
+                KafkaLogger.info(this.getClass(), "Sending event on topic '{}'.", kafkaConfig.getKafkaTopic());
+            } else {
+                KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, kafkaConfig.getKafkaTopic());
+            }
             return super.send(kafkaConfig.getKafkaTopic(), new Event(data));
         }
         KafkaLogger.warning(this.getClass(), "No topic defined.");
@@ -43,8 +48,11 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
             return CompletableFuture.completedFuture(null);
         }
         if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
-            KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), kafkaConfig.getKafkaTopic());
-            KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, kafkaConfig.getKafkaTopic());
+            if (!KafkaLogger.isDebugEnabled()) {
+                KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), kafkaConfig.getKafkaTopic());
+            } else {
+                KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, kafkaConfig.getKafkaTopic());
+            }
             return super.send(kafkaConfig.getKafkaTopic(), data);
         }
         KafkaLogger.warning(this.getClass(), "No topic defined.");
@@ -59,15 +67,21 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
         }
         if (topic == null) {
             if (kafkaConfig != null && kafkaConfig.getKafkaTopic() != null) {
-                KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), kafkaConfig.getKafkaTopic());
-                KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, kafkaConfig.getKafkaTopic());
+                if (!KafkaLogger.isDebugEnabled()) {
+                    KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), kafkaConfig.getKafkaTopic());
+                } else {
+                    KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, kafkaConfig.getKafkaTopic());
+                }
                 return super.send(kafkaConfig.getKafkaTopic(), data);
             }
             KafkaLogger.warning(this.getClass(), "No topic defined.");
             return CompletableFuture.completedFuture(null);
         } else {
-            KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), topic);
-            KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, topic);
+            if (!KafkaLogger.isDebugEnabled()) {
+                KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), topic);
+            } else {
+                KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, topic);
+            }
             return super.send(topic, data);
         }
     }
@@ -77,8 +91,11 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
             KafkaLogger.warning(this.getClass(), "Receiving null data.");
             return CompletableFuture.completedFuture(null);
         }
-        KafkaLogger.info(this.getClass(), "Sending event on topic '{}'.", topic);
-        KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, topic);
+        if (!KafkaLogger.isDebugEnabled()) {
+            KafkaLogger.info(this.getClass(), "Sending event on topic '{}'.", topic);
+        } else {
+            KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, topic);
+        }
         return send(topic, key, partition, timestamp, new Event(data));
     }
 
@@ -96,8 +113,11 @@ public class KafkaEventTemplate extends KafkaTemplate<String, Event> {
                 return CompletableFuture.completedFuture(null);
             }
         }
-        KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), topic);
-        KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, topic);
+        if (!KafkaLogger.isDebugEnabled()) {
+            KafkaLogger.info(this.getClass(), "Sending event '{}' on topic '{}'.", data.getMessageId(), topic);
+        } else {
+            KafkaLogger.debug(this.getClass(), "Sending event '{}' on topic '{}'.", data, topic);
+        }
         return super.send(topic, partition, timestamp, key, data);
     }
 }
