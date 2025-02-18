@@ -6,6 +6,7 @@ import com.biit.database.encryption.StringCryptoConverter;
 import com.biit.database.encryption.StringMapCryptoConverter;
 import com.biit.database.encryption.UUIDCryptoConverter;
 import com.biit.kafka.config.ObjectMapperFactory;
+import com.biit.kafka.config.encryption.KafkaStringCryptoConverter;
 import com.biit.kafka.logger.KafkaLogger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -81,6 +82,8 @@ public class Event {
     @Convert(converter = StringMapCryptoConverter.class)
     private Map<String, String> customProperties;
 
+    private static final KafkaStringCryptoConverter kafkaStringCryptoConverter = new KafkaStringCryptoConverter();
+
     public Event() {
         super();
         customProperties = new HashMap<>();
@@ -125,11 +128,11 @@ public class Event {
     }
 
     public String getPayload() {
-        return payload;
+        return kafkaStringCryptoConverter.convertToEntityAttribute(payload);
     }
 
     public void setPayload(String payload) {
-        this.payload = payload;
+        this.payload = kafkaStringCryptoConverter.convertToDatabaseColumn(payload);
     }
 
     public String getTo() {

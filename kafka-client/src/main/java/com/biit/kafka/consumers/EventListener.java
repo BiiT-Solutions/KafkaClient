@@ -26,7 +26,8 @@ public class EventListener {
     @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
-    private final boolean ignoreOwnEvents;
+    @Value("${kafka.ignore.own.events:#{null}}")
+    private boolean ignoreOwnEvents;
 
     public interface EventReceivedListener {
         void received(Event event, Integer offset, String groupId, String key, int partition, String topic, long timeStamp);
@@ -35,13 +36,6 @@ public class EventListener {
     public EventListener() {
         super();
         this.listeners = new HashSet<>();
-        ignoreOwnEvents = true;
-    }
-
-    public EventListener(boolean ignoreOwnEvents) {
-        super();
-        this.listeners = new HashSet<>();
-        this.ignoreOwnEvents = ignoreOwnEvents;
     }
 
     public void addListener(EventReceivedListener listener) {

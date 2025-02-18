@@ -4,7 +4,7 @@
         <groups>
             <run>
                 <!-- Kafka server is down on testing -->
-                <exclude name="kafkaTemplateEvents"/>
+                <include name="kafkaTemplateEvents"/>
                 <!-- Disabled as not used -->
                 <exclude name="ksqlClient"/>
             </run>
