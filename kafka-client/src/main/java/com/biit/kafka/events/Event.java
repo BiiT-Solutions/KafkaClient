@@ -82,7 +82,7 @@ public class Event {
     @Convert(converter = StringMapCryptoConverter.class)
     private Map<String, String> customProperties;
 
-    private static final KafkaStringCryptoConverter kafkaStringCryptoConverter = new KafkaStringCryptoConverter();
+    private static final KafkaStringCryptoConverter KAFKA_STRING_CRYPTO_CONVERTER = new KafkaStringCryptoConverter();
 
     public Event() {
         super();
@@ -128,11 +128,11 @@ public class Event {
     }
 
     public String getPayload() {
-        return kafkaStringCryptoConverter.convertToEntityAttribute(payload);
+        return KAFKA_STRING_CRYPTO_CONVERTER.convertToEntityAttribute(payload);
     }
 
     public void setPayload(String payload) {
-        this.payload = kafkaStringCryptoConverter.convertToDatabaseColumn(payload);
+        this.payload = KAFKA_STRING_CRYPTO_CONVERTER.convertToDatabaseColumn(payload);
     }
 
     public String getTo() {

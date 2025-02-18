@@ -13,7 +13,7 @@ public class KafkaKeyProperty {
     private static String nonce;
     private static String salt;
 
-    public KafkaKeyProperty(@Value("${kafka.encryption.key:#{null}}") String encryptionKey,
+    protected KafkaKeyProperty(@Value("${kafka.encryption.key:#{null}}") String encryptionKey,
                             @Value("${kafka.encryption.salt:#{null}}") String salt,
                             @Value("${kafka.public.key:#{null}}") String publicKey,
                             @Value("${kafka.private.key:#{null}}") String privateKey,
@@ -34,11 +34,6 @@ public class KafkaKeyProperty {
     }
 
     public static String getEncryptionKey() {
-        return encryptionKey;
-    }
-
-    @Deprecated
-    public static String getDatabaseEncryptionKey() {
         return encryptionKey;
     }
 
