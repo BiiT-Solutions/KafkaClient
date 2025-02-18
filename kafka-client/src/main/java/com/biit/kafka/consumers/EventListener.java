@@ -26,7 +26,7 @@ public class EventListener {
     @Value("${spring.application.name:#{null}}")
     private String applicationName;
 
-    @Value("${kafka.ignore.own.events:#{null}}")
+    @Value("#{new Boolean('${kafka.ignore.own.events:true}')}")
     private boolean ignoreOwnEvents;
 
     public interface EventReceivedListener {
