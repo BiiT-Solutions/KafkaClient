@@ -14,12 +14,12 @@ public class KafkaKeyProperty {
     private static String salt;
 
     protected KafkaKeyProperty(@Value("${kafka.encryption.key:#{null}}") String encryptionKey,
-                            @Value("${kafka.encryption.salt:#{null}}") String salt,
-                            @Value("${kafka.public.key:#{null}}") String publicKey,
-                            @Value("${kafka.private.key:#{null}}") String privateKey,
-                            @Value("${kafka.nonce:#{null}}") String nonce,
-                            @Value("${kafka.encryption.salt:#{null}}") String encryptionSalt,
-                            @Value("${kafka.encryption.nonce:#{null}}") String encryptionNonce) {
+                               @Value("${kafka.encryption.salt:#{null}}") String salt,
+                               @Value("${kafka.public.key:#{null}}") String publicKey,
+                               @Value("${kafka.private.key:#{null}}") String privateKey,
+                               @Value("${kafka.nonce:#{null}}") String nonce,
+                               @Value("${kafka.encryption.salt:#{null}}") String encryptionSalt,
+                               @Value("${kafka.encryption.nonce:#{null}}") String encryptionNonce) {
         setEncryptionKey(encryptionKey);
         setPublicKey(publicKey);
         setPrivateKey(privateKey);
@@ -33,7 +33,7 @@ public class KafkaKeyProperty {
         }
     }
 
-    public static String getEncryptionKey() {
+    public static synchronized String getEncryptionKey() {
         return encryptionKey;
     }
 
@@ -52,7 +52,7 @@ public class KafkaKeyProperty {
         KafkaKeyProperty.salt = salt;
     }
 
-    public static String getPublicKey() {
+    public static synchronized String getPublicKey() {
         return publicKey;
     }
 
@@ -60,7 +60,7 @@ public class KafkaKeyProperty {
         KafkaKeyProperty.publicKey = publicKey;
     }
 
-    public static String getPrivateKey() {
+    public static synchronized String getPrivateKey() {
         return privateKey;
     }
 
@@ -68,11 +68,11 @@ public class KafkaKeyProperty {
         KafkaKeyProperty.privateKey = privateKey;
     }
 
-    public static String getNonce() {
+    public static synchronized String getNonce() {
         return nonce;
     }
 
-    public static String getSalt() {
+    public static synchronized String getSalt() {
         return salt;
     }
 }
