@@ -5,27 +5,36 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import jakarta.validation.constraints.NotEmpty;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
 public class EventDTO extends CreatedElementDTO {
 
+    @Serial
+    private static final long serialVersionUID = 6837549266849911934L;
+
     private String id;
 
     private String to;
 
+    @NotEmpty
     private String replyTo;
 
     private UUID sessionId;
 
+    @NotEmpty
     private UUID messageId;
 
     private UUID correlationId;
 
+    @NotEmpty
     private String subject;
 
+    @NotEmpty
     private String tag;
 
     private String tenant;
@@ -34,8 +43,10 @@ public class EventDTO extends CreatedElementDTO {
 
     private String authorization;
 
+    @NotEmpty
     private String entityType;
 
+    @NotEmpty
     private Object payload;
 
     private String organization;
