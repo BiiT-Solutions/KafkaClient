@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class EventDTO extends CreatedElementDTO {
 
     private UUID sessionId;
 
-    @NotEmpty
+    @NotNull
     private UUID messageId;
 
     private UUID correlationId;
