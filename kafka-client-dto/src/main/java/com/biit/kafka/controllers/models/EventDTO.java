@@ -44,10 +44,8 @@ public class EventDTO extends CreatedElementDTO {
 
     private String authorization;
 
-    @NotEmpty
     private String entityType;
 
-    @NotNull
     private Object payload;
 
     private String organization;
