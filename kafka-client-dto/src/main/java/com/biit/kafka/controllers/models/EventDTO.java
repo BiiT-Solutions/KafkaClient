@@ -26,6 +26,7 @@ public class EventDTO extends CreatedElementDTO {
 
     private UUID sessionId;
 
+    @NotEmpty
     private UUID messageId;
 
     private UUID correlationId;
