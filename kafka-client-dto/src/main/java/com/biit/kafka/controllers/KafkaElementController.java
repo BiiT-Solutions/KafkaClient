@@ -11,6 +11,8 @@ import com.biit.server.exceptions.ValidateBadRequestException;
 import com.biit.server.persistence.entities.Element;
 import com.biit.server.persistence.repositories.ElementRepository;
 import com.biit.server.providers.ElementProvider;
+import com.biit.server.security.IUserOrganizationProvider;
+import com.biit.server.security.model.IUserOrganization;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,8 +28,9 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
 
     private final IEventSender<DTO> eventSender;
 
-    protected KafkaElementController(PROVIDER provider, CONVERTER converter, @Autowired(required = false) IEventSender<DTO> eventSender) {
-        super(provider, converter);
+    protected KafkaElementController(PROVIDER provider, CONVERTER converter, @Autowired(required = false) IEventSender<DTO> eventSender,
+                                     IUserOrganizationProvider<IUserOrganization> userOrganizationProvider) {
+        super(provider, converter, userOrganizationProvider);
         this.eventSender = eventSender;
     }
 
