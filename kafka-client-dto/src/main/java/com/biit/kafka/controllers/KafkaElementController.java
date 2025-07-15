@@ -29,7 +29,7 @@ public abstract class KafkaElementController<ENTITY extends Element<KEY>, KEY, D
     private final IEventSender<DTO> eventSender;
 
     protected KafkaElementController(PROVIDER provider, CONVERTER converter, @Autowired(required = false) IEventSender<DTO> eventSender,
-                                     IUserOrganizationProvider<IUserOrganization> userOrganizationProvider) {
+                                     List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
         super(provider, converter, userOrganizationProvider);
         this.eventSender = eventSender;
     }

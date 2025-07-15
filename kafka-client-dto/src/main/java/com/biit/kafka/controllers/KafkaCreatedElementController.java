@@ -33,7 +33,7 @@ public abstract class KafkaCreatedElementController<
     private final IEventSender<DTO> eventSender;
 
     protected KafkaCreatedElementController(PROVIDER provider, CONVERTER converter, @Autowired(required = false) IEventSender<DTO> eventSender,
-                                            IUserOrganizationProvider<IUserOrganization> userOrganizationProvider) {
+                                            List<IUserOrganizationProvider<? extends IUserOrganization>> userOrganizationProvider) {
         super(provider, converter, userOrganizationProvider);
         this.eventSender = eventSender;
     }
