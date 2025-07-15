@@ -14,3 +14,4 @@ tmp
 *.iml
 Kafka.log
 .attach_*
+pom.xml.releaseBackup
