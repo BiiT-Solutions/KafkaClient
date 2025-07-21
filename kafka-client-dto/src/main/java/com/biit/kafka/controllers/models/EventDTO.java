@@ -156,6 +156,7 @@ public class EventDTO extends CreatedElementDTO {
 
     public void setOrganization(String organization) {
         this.organization = organization;
+        setCreatedOn(organization);
     }
 
     public String getUnit() {
