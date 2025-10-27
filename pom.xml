@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kafka-client-project</artifactId>
     <packaging>pom</packaging>
-    <version>1.4.4</version>
+    <version>1.4.5-SNAPSHOT</version>
     <name>Kafka Client</name>
     <description>Client used to communicate with the Kafka server.</description>
 
@@ -48,7 +48,7 @@
         <connection>scm:git:ssh://git@github.com/BiiT-Solutions/KafkaClient.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/BiiT-Solutions/KafkaClient.git</developerConnection>
         <url>https://github.com/BiiT-Solutions/KafkaClient.git</url>
-        <tag>kafka-client-project-1.4.4</tag>
+        <tag>kafka-client</tag>
     </scm>
 
     <build>
