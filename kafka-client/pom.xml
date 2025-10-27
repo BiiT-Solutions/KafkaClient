@@ -7,7 +7,7 @@
     <description>Client used to communicate with the Kafka server.</description>
 
     <parent>
-        <groupId>com.biit</groupId>
+        <groupId>com.biit-solutions</groupId>
         <artifactId>kafka-client-project</artifactId>
         <version>1.4.4-SNAPSHOT</version>
     </parent>
@@ -19,11 +19,11 @@
     <dependencies>
         <!-- File access and logger -->
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>common-utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>database-encryptor</artifactId>
         </dependency>
 
@@ -87,7 +87,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-persistence</artifactId>
             <scope>compile</scope>
         </dependency>

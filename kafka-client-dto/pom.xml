@@ -7,7 +7,7 @@
     <description>For integration on BiiT Rest Server DTO classes</description>
 
     <parent>
-        <groupId>com.biit</groupId>
+        <groupId>com.biit-solutions</groupId>
         <artifactId>kafka-client-project</artifactId>
         <version>1.4.4-SNAPSHOT</version>
     </parent>
@@ -18,12 +18,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>kafka-client</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.biit</groupId>
+            <groupId>com.biit-solutions</groupId>
             <artifactId>rest-server-dto</artifactId>
         </dependency>
 
