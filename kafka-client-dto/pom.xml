@@ -2,14 +2,14 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kafka-client-dto</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.5</version>
+    <version>1.4.6-SNAPSHOT</version>
     <name>Kafka client DTO</name>
     <description>For integration on BiiT Rest Server DTO classes</description>
 
     <parent>
         <groupId>com.biit-solutions.kafka</groupId>
         <artifactId>kafka-client-project</artifactId>
-        <version>1.4.5</version>
+        <version>1.4.6-SNAPSHOT</version>
     </parent>
 
     <properties>
