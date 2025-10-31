@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.biit-solutions.kafka</groupId>
     <artifactId>kafka-client</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>1.2.3-SNAPSHOT</version>
     <name>Kafka client</name>
     <description>Client used to communicate with the Kafka server.</description>
