@@ -4,7 +4,7 @@
     <groupId>com.biit-solutions.kafka</groupId>
     <artifactId>kafka-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.3</version>
+    <version>1.2.4-SNAPSHOT</version>
     <name>Kafka client</name>
     <description>Client used to communicate with the Kafka server.</description>
 
@@ -45,7 +45,7 @@
         <connection>scm:git:ssh://git@github.com/BiiT-Solutions/KafkaClient.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/BiiT-Solutions/KafkaClient.git</developerConnection>
         <url>https://github.com/BiiT-Solutions/KafkaClient.git</url>
-        <tag>kafka-client-1.2.3</tag>
+        <tag>kafka-client</tag>
     </scm>
 
     <dependencies>
